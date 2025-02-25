@@ -5,7 +5,7 @@ Flask==3.1.0
 Flask-RESTful==0.3.10
 Flask-SQLAlchemy==3.1.1
 itsdangerous==2.2.0
-Jinja2==3.1.5
+Jinja2==3.1.5^X
 MarkupSafe==3.0.2
 python-dotenv==1.0.1
 pytz==2025.1
@@ -13,3 +13,4 @@ six==1.17.0
 SQLAlchemy==2.0.38
 typing_extensions==4.12.2
 Werkzeug==3.1.3
+ 
