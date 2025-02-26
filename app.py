@@ -7,11 +7,10 @@ app = Flask(__name__)
 
 import config 
 
-
  
 import models
-import routes
 
+import routes
 
 
 

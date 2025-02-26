@@ -10,4 +10,3 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.getenv('SQLALCHEMY_TRACK_MODIF
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY') 
 
 
-

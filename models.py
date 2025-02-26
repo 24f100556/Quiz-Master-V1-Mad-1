@@ -1,7 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
-import datetime
+# from datetime import datetime
 
 from app import app
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 
 db = SQLAlchemy(app)  
@@ -16,9 +18,28 @@ class User(db.Model):
     email = db.Column(db.String(100), unique=True, nullable=False)
     passhash = db.Column(db.String(600), nullable=False)
     name = db.Column(db.String(100), nullable=False)
-    qualification = db.Column(db.String(100))
+    level = db.Column(db.String(100))
     dob = db.Column(db.Date)
     scores = db.relationship('Score', backref='user', lazy=True)
+    
+
+
+    @property
+    def password(self):
+        raise AttributeError('password is not a readable attribute')
+
+    @password.setter
+    def password(self,password):
+        self.passhash = generate_password_hash(password)
+
+
+
+    def check_password(self, password):
+        return check_password_hash(self.passhash, password)
+        
+
+
+
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -58,4 +79,8 @@ class Score(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
     total_score = db.Column(db.Integer, nullable=False)
-    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    # timestamp = db.Column(db.DateTime, default=datetime.datetime)
+
+
+with app.app_context():
+    db.create_all()
