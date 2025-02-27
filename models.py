@@ -1,8 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
-# from datetime import datetime
-
+from datetime import datetime
+from flask_login import UserMixin
 from app import app
 from werkzeug.security import generate_password_hash, check_password_hash
+
 
 
 
@@ -12,14 +13,15 @@ db = SQLAlchemy(app)
 
 
 
-class User(db.Model):
+class User(db.Model,UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(35), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     passhash = db.Column(db.String(600), nullable=False)
-    name = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(100), nullable=True)
     level = db.Column(db.String(100))
-    dob = db.Column(db.Date)
+    dob = db.Column(db.Date, nullable=True)
+    is_admin = db.Column(db.Boolean, nullable = False , default = False)
     scores = db.relationship('Score', backref='user', lazy=True)
     
 
@@ -79,8 +81,14 @@ class Score(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     quiz_id = db.Column(db.Integer, db.ForeignKey('quiz.id'), nullable=False)
     total_score = db.Column(db.Integer, nullable=False)
-    # timestamp = db.Column(db.DateTime, default=datetime.datetime)
+    timestamp = db.Column(db.DateTime, default=datetime)
 
 
 with app.app_context():
     db.create_all()
+
+    admin = User.query.filter_by(username = 'admin').first()
+    if not admin :
+        admin = User(username='admin',email = 'admin@gmail.com',password = 'admin', name = 'admin', is_admin = True)
+        db.session.add(admin)
+        db.session.commit()
