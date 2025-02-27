@@ -5,5 +5,7 @@
 {%endblock%}
 
 {%block content%}
+{% if user.is_authenticated %}
 <h1>Hello {{user.name}} </h1>
+{%endif%}
 {%endblock%}

@@ -1,5 +1,10 @@
 {% extends 'layout.html' %}
 
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">   
+{% endblock %}
+
 {%block title%}
 Login - Quiz-Master
 {%endblock%}
@@ -19,20 +24,3 @@ Login - Quiz-Master
 </form>
 {%endblock%}
 
-{%block style%}
-<style>
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        
-     
-    }
-    h1 {
-        margin-top: 64px;
-        text-align : center ;
-    }
-    
-
-</style>
-{%endblock%}
