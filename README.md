@@ -24,7 +24,7 @@ Ensure you have **Python 3.7+** and **pip** installed on your system.
 ### Steps to Run the Project
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/quiz-master-v1.git
+   git clone https://github.com/24f100556/Quiz-Master-V1-Mad-1.git
    cd quiz-master-v1
    ```
 2. **Create a virtual environment** (optional but recommended)
@@ -38,7 +38,7 @@ Ensure you have **Python 3.7+** and **pip** installed on your system.
    ```
 4. **Run the application**
    ```bash
-   python app.py
+   python app.py or flask run
    ```
 5. Open **http://127.0.0.1:5000/** in your browser.
 
