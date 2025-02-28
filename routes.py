@@ -11,7 +11,22 @@ from flask_login import login_user , login_required , logout_user, current_user
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html',user = current_user)
+    user = current_user
+    if user.is_admin:
+        return redirect(url_for('admin'))
+    else:
+         return render_template('index.html',user = current_user)
+    
+
+
+@app.route('/admin')
+@login_required
+def admin():
+    user = current_user
+    if not user.is_admin:
+        flash('YOU ARE NOT AUTHORIZED TO VIEW THIS PAGE.',category = 'error')
+        return redirect(url_for('index'))
+    return render_template('admin.html',user = current_user)
 
 
 

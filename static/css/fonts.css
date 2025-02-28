@@ -1,0 +1,61 @@
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: url('/static/fonts/SF-Pro-Rounded-Regular.woff2') format('woff2');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'SF Pro Rounded';
+    src: url('/static/fonts/SF-Pro-Rounded-Medium.woff2') format('woff2');
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('/static/fonts/SF-Pro-Text-Regular.woff2') format('woff2');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'SF Pro Text';
+    src: url('/static/fonts/SF-Pro-Text-Semibold.woff2') format('woff2');
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/static/fonts/SF-Pro-Display-Bold.woff2') format('woff2');
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/static/fonts/SF-Pro-Display-Black.woff2') format('woff2');
+    font-weight: 900;
+}
+
+/* Applying fonts */
+body {
+    font-family: 'SF Pro Text', sans-serif;
+    font-weight: 400;
+}
+
+h1, h2 {
+    font-family: 'SF Pro Display', sans-serif;
+    font-weight: 700;
+}
+
+h3, h4 {
+    font-family: 'SF Pro Text', sans-serif;
+    font-weight: 600;
+}
+
+button, .ui-button {
+    font-family: 'SF Pro Rounded', sans-serif;
+    font-weight: 500;
+}
+
+.hero-title {
+    font-family: 'SF Pro Display', sans-serif;
+    font-weight: 900;
+}

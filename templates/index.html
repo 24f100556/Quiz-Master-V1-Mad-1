@@ -4,8 +4,52 @@
     Home - Quiz-Master
 {%endblock%}
 
+
+{% block head %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+{% endblock %}
+
+
 {%block content%}
-{% if user.is_authenticated %}
-<h1>Hello {{user.name}} </h1>
-{%endif%}
+
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="list-group">
+                <a href="#" class="list-group-item active">Dashboard</a>
+                <a href="{{ url_for('profile') }}" class="list-group-item">Profile</a>
+               
+                <a href="#" class="list-group-item" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2>Welcome, {{ current_user.name }} 👋</h2>
+            <p class = 'white-text'>Your current level: <strong>{{ current_user.level }}</strong></p>
+            
+            <!-- Progress Section -->
+            <div class="card p-3 mb-3">
+                <h5>Your Progress</h5>
+                <p>Quizzes Taken: <strong>10</strong></p>
+                <p>Average Score: <strong>85%</strong></p>
+            </div>
+
+            <!-- Available Quizzes -->
+            <div class="card p-3">
+                <h5>Available Quizzes</h5>
+                <ul>
+                    <li>Math Quiz <a href="#" class="btn btn-sm btn-primary">Start</a></li>
+                    <li>Science Quiz <a href="#" class="btn btn-sm btn-primary">Start</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 {%endblock%}

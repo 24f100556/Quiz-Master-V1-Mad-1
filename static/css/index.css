@@ -1,0 +1,66 @@
+.list-group-item {
+    font-weight: 500;
+    position: relative;  
+    top: 150px;    /* Move down */
+    bottom: 20px; /* Move up */
+    left: 20px;   /* Move right */
+    right: 100px;  /* Move left */
+    
+}
+
+h2 {
+    font-family: "SF Pro Display", sans-serif;
+    font-weight: 600;
+    margin-left: 120px;  /* Move text to the right */
+    margin-top: 60px;
+    position: absolute;
+    top: 350px;
+    transform: translate(50px, 60px);
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 400px;  /* Adjust width */
+    
+    font-size: 16px;  /* Adjust text size */
+    transform: translate(-300px, 350px);
+}
+
+
+.container {
+    margin-top: 20px;  /* Reduce gap from top */
+}
+
+body {
+    background-image: url("/static/images/background.webp");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+}
+
+
+.white-text {
+    color: white !important;
+}
+
+
+
+h1, h2, h3 {
+    color: white !important; /* Ensures text remains white */
+}
+
+
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.242); /* Dark overlay */
+    z-index: -1;
+}
+
+
