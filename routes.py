@@ -81,75 +81,51 @@ def logout():
 def profile():
     return render_template('profile.html', user=current_user)
 
-    
-
-# @app.route('/profile',methods = ['POST'])
-# @login_required
-# def profile_post():
-
-#         current_user.username = request.form.get('username')
-#         current_user.email = request.form.get('email')
-#         current_user.name = request.form.get('name')
-#         current_user.password = request.form.get('password')
-#         current_user.level = request.form.get('level')
-#         dob_str = request.form.get('dob')  
-#         if dob_str:  
-#             current_user.dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
- 
-#         if User.query.filter_by(username=current_user.username).first() and User.query.filter_by(username=current_user.username).first().id != current_user.id:
-#             flash('Oops! That username is taken. You can try adding numbers or a unique word',category='error')
-#             return redirect(url_for('profile'))
-#         if User.query.filter_by(email=current_user.email).first() and User.query.filter_by(email=current_user.email).first().id != current_user.id:
-#             flash('Oops! An account with this email already exists. Please use a different email.',category='error')
-        
-#         if not current_user.check_password(request.form.get('cpassword')):  #
-#             flash('Incorrect current password', category='error')
-#             return redirect(url_for('profile'))
-
-            
-
-
-#         db.session.commit()
-#         flash('Profile updated successfully!', category='success')
-#         return render_template('profile.html', user = current_user)
 
 
 
-
-@app.route('/profile', methods=['POST'])
+@app.route('/profile/edit', methods=['GET','POST'])
 @login_required
-def profile_post():
-    current_user.username = request.form.get('username')
-    current_user.email = request.form.get('email')
-    current_user.name = request.form.get('name')
-    current_user.level = request.form.get('level')
+def edit_profile():
+    if request.method == 'POST' :
 
-    dob_str = request.form.get('dob')  
-    if dob_str:
-        current_user.dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
+        current_user.username = request.form.get('username')
+        current_user.email = request.form.get('email')
+        current_user.name = request.form.get('name')
+        current_user.level = request.form.get('level')
 
-    
-    existing_user = User.query.filter_by(username=current_user.username).first()
-    if existing_user and existing_user.id != current_user.id:
-        flash('Oops! That username is taken.', category='error')
-        return redirect(url_for('profile'))
+        dob_str = request.form.get('dob')  
+        if dob_str:
+            current_user.dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
 
-    existing_email = User.query.filter_by(email=current_user.email).first()
-    if existing_email and existing_email.id != current_user.id:
-        flash('Oops! An account with this email already exists.', category='error')
-        return redirect(url_for('profile'))
+        
+        existing_user = User.query.filter_by(username=current_user.username).first()
+        if existing_user and existing_user.id != current_user.id:
+            flash('Oops! That username is taken.', category='error')
+            return redirect(url_for('edit_profile'))
 
-    
-    cpassword = request.form.get('cpassword')
-    if not current_user.check_password(cpassword):  
-        flash('Incorrect current password', category='error')
-        return redirect(url_for('profile'))
+        existing_email = User.query.filter_by(email=current_user.email).first()
+        if existing_email and existing_email.id != current_user.id:
+            flash('Oops! An account with this email already exists.', category='error')
+            return redirect(url_for('edit_profile'))
+
+        
+        cpassword = request.form.get('cpassword')
+        if not current_user.check_password(cpassword):  
+            flash('Incorrect current password', category='error')
+            return redirect(url_for('edit_profile'))
 
 
-    new_password = request.form.get('password')
-    if new_password:
-        current_user.password = new_password  
+        new_password = request.form.get('password')
+        if new_password:
+            current_user.password = new_password  
 
-    db.session.commit()
-    flash('Profile updated successfully!', category='success')
-    return redirect(url_for('profile'))
+        db.session.commit()
+        flash('Profile updated successfully!', category='success')
+        return redirect(url_for('edit_profile'))
+    return render_template('edit_profile.html',user = current_user)
+
+@app.route('/dashboard')
+@login_required  
+def dashboard():
+    return render_template('dashboard.html',user=current_user)

@@ -9,50 +9,26 @@
         <small class = 'text-muted'>(@{{user.username}})</small>
     </h1>
    
-        <hr>
-        <h3>Edit profile</h3>
-        <form action="{{ url_for('profile_post') }}" method="POST" enctype="multipart/form-data">
-        
-            <label for="username" class = 'form-lable'>Username:
-            <input type="text" id="username" name="username" class = "form-control" value="{{ current_user.username }}" required>
-            </label>
-
-            <label for="email" class = 'form-lable'>Email:
-            <input type="email" id="email" name="email" class = 'form-control' value="{{ current_user.email }}" required>
-            </label>
-
-            <label for="name" class = 'form-lable'>Name:
-            <input type="text" id="name" name="name" class ='form-control' value="{{ current_user.name }}" required>
-            </label>
-
-            <label for="cpassword" class = 'form-lable'>Current password:
-                <input type="password" id="cpassword" name="cpassword" class ='form-control'  required>
-            </label>
-
-            <label for="password" class = 'form-lable'>New password:
-                <input type="password" id="password" name="password" class ='form-control'  required>
-            </label>
-
-
-            <label for="dob">Date of Birth:
-            <input type="date" id="dob" name="dob"  class ='form-control' value="{{ current_user.dob }}">
-            </label>
-            <div class="mb-3">
-                <label for="level" class="form-label">Choose your level:</label>
-                <select id="level" name="level" class="form-select" required>
-                    <option value="" disabled selected>Select level</option>
-                    <option value="Foundation">Foundation</option>
-                    <option value="Diploma">Diploma</option>
-                    <option value="Degree">Degree</option>
-                   
-                </select>
-            </div>
-
-            <input type = 'submit' value = 'Save changes'  class = 'btn  btn-success'>
-        </form>
+<div class = 'button-container'>
+    <a href="{{ url_for('edit_profile') }}" class="btn btn-info">Edit Profile</a>
+   
+    <a href="#" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>   
+</div>
 {% endblock %}
 
 
 
+{% block style %}
+<style>
+.button-container,h1{
+        display : flex;
+        flex-direction: column;
+        align-items: center;
+        gap : 10px;
 
+    }
+
+</style>
+    
+{% endblock %}
 
