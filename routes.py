@@ -3,7 +3,7 @@ from app import app
 from models import db, User, Course, Chapter, Quiz, Question, Option, Score
 from datetime import datetime 
 from flask_login import login_user , login_required , logout_user, current_user
-
+import sqlite3
 
 
 
@@ -26,7 +26,9 @@ def admin():
     if not user.is_admin:
         flash('YOU ARE NOT AUTHORIZED TO VIEW THIS PAGE.',category = 'error')
         return redirect(url_for('index'))
-    return render_template('admin.html',user = current_user)
+    return render_template('admin/admin.html',user = current_user, total_users = User.query.count())
+
+
 
 
 
@@ -71,6 +73,7 @@ def register_post():
     if username == '' or password == '':
         flash('User name or password cannot be empty.',category='error')
         return redirect(url_for('register'))
+    
     if User.query.filter_by(username=username).first():
         flash('Oops! That username is taken. You can try adding numbers or a unique word',category='error')
         return redirect(url_for('register'))
@@ -80,9 +83,14 @@ def register_post():
     user = User( email = email, username = username, password = password, name = name,  level = level,dob = dob) 
     db.session.add(user)
     db.session.commit()
-    flash('User successfully registered.',category='success')
+    if current_user.is_authenticated and current_user.is_admin:
+            flash('User registered successfully!', 'success')
+            return redirect(url_for('manage_users'))
     login_user(user, remember= True)
+    flash('Registration successful!', 'success')
     return redirect(url_for('index',user = current_user))
+
+ 
 
 @app.route('/logout')
 @login_required
@@ -143,4 +151,54 @@ def edit_profile():
 @app.route('/dashboard')
 @login_required  
 def dashboard():
-    return render_template('dashboard.html',user=current_user)
+    return render_template('dashboard.html',user=current_user) 
+
+
+@app.route('/manage_users')
+@login_required
+def manage_users():
+    users = User.query.all()
+    return render_template('admin/manage_users.html',users=users,user=current_user)
+
+@app.route('/add_user')
+@login_required
+def add_user():
+    return redirect(url_for('register'))
+
+@app.route('/admin/users/edit/<int:user_id>', methods=['GET', 'POST'])
+@login_required  
+def admin_edit_user(user_id):
+  
+    user = User.query.get_or_404(user_id)  
+    
+    if request.method == 'POST':
+      
+        user.username = request.form.get('username')
+        user.email = request.form.get('email')
+        user.name = request.form.get('name')
+        user.level = request.form.get('level')
+        dob_str = request.form.get('dob')  
+        if dob_str:
+            user.dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
+
+        db.session.commit()
+        flash('User profile updated successfully!', 'success')
+        return redirect(url_for('manage_users')) 
+
+    return render_template('admin/edit_user.html', user=user)
+
+
+@app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    db.session.delete(user)
+    db.session.commit()
+    flash('User deleted successfully!', 'success')
+  
+    return redirect(url_for('manage_users'))  
+
+
+    
+    
+
+    

@@ -20,8 +20,8 @@ Login - Quiz-Master
     <label for="password" class='form-label' > Password:
         <input type="password" id="password" name="password" class='form-control' required>
     </label>
-    <input type = 'submit' value = 'Login' class ='btn btn-success'>
-
+    <input type = 'submit' value = 'Login' class ='btn btn-success'> <br>
+    <span>New user?<a href = "{{url_for('register')}}" > register</a></span>
 </form>
 {%endblock%}
 

@@ -1,44 +1,87 @@
-.list-group-item {
-    font-weight: 500;
-    position: relative;  
-    top: 150px;    /* Move down */
-    bottom: 20px; /* Move up */
-    left: 20px;   /* Move right */
-    right: 100px;  /* Move left */
-    
-}
-
-h2 {
-    font-family: "SF Pro Display", sans-serif;
-    font-weight: 600;
-    margin-left: 120px;  /* Move text to the right */
-    margin-top: 60px;
-    position: absolute;
-    top: 350px;
-    transform: translate(50px, 60px);
-}
-
-.card {
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 400px;  /* Adjust width */
-    
-    font-size: 16px;  /* Adjust text size */
-    transform: translate(-300px, 350px);
-}
 
 
-.container {
-    margin-top: 20px;  /* Reduce gap from top */
-}
-
+/* General Page Styling */
 body {
-    background-image: url("/static/images/background.webp");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
+    background: url('/static/images/background.webp') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Orbitron', sans-serif;
+    color: white;
 }
+
+/* Card Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+/* Card Design */
+.card {
+    background: rgba(10, 25, 47, 0.8); /* Dark futuristic blue */
+    border: 2px solid rgba(0, 162, 255, 0.6);
+    box-shadow: 0px 0px 20px rgba(0, 162, 255, 0.7);
+    border-radius: 12px;
+    padding: 20px;
+    width: 350px;
+    text-align: center;
+    transition: 0.3s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0px 0px 25px rgba(0, 255, 255, 0.9);
+    transform: translateY(-5px);
+}
+
+/* Heading */
+.card h2 {
+    margin-bottom: 10px;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Button Styling */
+.start-btn {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.start-btn:hover {
+    background: linear-gradient(135deg, #0072ff, #00c6ff);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+    transform: scale(1.1);
+}
+
+/* List Styling */
+.card ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.card li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+
 
 
 .white-text {
@@ -47,20 +90,7 @@ body {
 
 
 
-h1, h2, h3 {
-    color: white !important; /* Ensures text remains white */
-}
 
 
-body::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.242); /* Dark overlay */
-    z-index: -1;
-}
 
 

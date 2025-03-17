@@ -1,0 +1,108 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+Admin Dashboard - Quiz-Master
+{% endblock %}
+
+
+{% block content %}
+<h1>Admin Dashboard</h1>
+<h2>Hello Mr.{{user.username}}</h2> 
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+            <div class="sidebar-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{url_for('manage_users')}}">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Quizzes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Results</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
+                    <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="col-md-10 ml-sm-auto px-4">
+            <div class="row">
+                <!-- Stats Cards -->
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Users</h5>
+                            <p class="card-text">{{ total_users }}</p>
+                        </div>
+                    </div>
+                    <a class = "btn btn-primary" href="{{ url_for('manage_users' ) }}">Manage Users</a>
+
+                    
+
+
+
+
+
+
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Quizzes</h5>
+                            <p class="card-text">{{ total_quizzes }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-warning mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Questions</h5>
+                            <p class="card-text">{{ total_questions }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Quizzes Table -->
+            <h3 class="mt-4">Recent Quizzes</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Quiz Name</th>
+                        <th>Created By</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for quiz in recent_quizzes %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ quiz.name }}</td>
+                        <td>{{ quiz.created_by }}</td>
+                        <td>{{ quiz.created_at.strftime('%Y-%m-%d') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+</div>
+{% endblock %}
+
+
+
+{% block style %}
+<style>
+    h1,h2{
+        text-align: center;
+
+
+    }
+
+
+</style>
+    
+{% endblock %}
+
