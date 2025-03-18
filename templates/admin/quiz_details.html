@@ -1,0 +1,63 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Quiz Details</h3>
+        </div>
+        <div class="card-body">
+            <p><strong>Quiz Name:</strong> {{ quiz.name }}</p>
+            <p><strong>Date:</strong> {{ quiz.date }}</p>
+            <p><strong>Time:</strong> {{ quiz.time }}</p>
+            <p><strong>Chapter:</strong> {{ quiz.chapter.name }}</p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h4>Questions</h4>
+        </div>
+        <div class="card-body">
+            {% if quiz.questions %}
+                <ul class="list-group">
+                    {% for question in quiz.questions %}
+                        <li class="list-group-item mb-3">
+                            <p><strong>{{ loop.index }}. {{ question.statement }}</strong> (Marks: {{ question.marks }})</p>
+
+                            <ul class="list-group mb-2">
+                                {% for option in question.options %}
+                                    <li class="list-group-item 
+                                        {% if option.is_correct %}
+                                            list-group-item-success
+                                        {% endif %}
+                                    ">
+                                        {{ option.option_text }}
+                                        {% if option.is_correct %}
+                                            <span class="badge bg-success">Correct</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                          
+                            <a href="{{ url_for('delete_question', question_id=question.id) }}" class="btn btn-danger btn-sm"
+                                onclick="return confirm('Delete this question?');"><i class="fa-solid fa-trash"></i> Delete Question</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No questions added yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mb-5">
+    <a href="{{ url_for('add_question', quiz_id=quiz.id) }}" class="btn btn-primary mt-3"><i class="fa-solid fa-square-plus"> </i> Add New Question</a>
+    <a href="{{ url_for('add_quiz') }}" class="btn btn-secondary mt-3"><i class="fa-solid fa-backward"></i> Back to Quizzes</a>
+    </div>
+</div>
+
+{% endblock %}

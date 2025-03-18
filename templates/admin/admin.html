@@ -4,19 +4,22 @@
 Admin Dashboard - Quiz-Master
 {% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
 
 {% block content %}
-<h1>Admin Dashboard</h1>
-<h2>Hello Mr.{{user.username}}</h2> 
+
+<h2 class="text-center text-white">Admin Dashboard</h2><br>
 
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <nav class="col-md-2 d-none d-md-block sidebar glass-sidebar">
             <div class="sidebar-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{url_for('manage_users')}}">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_users') }}">Users</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Quizzes</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Results</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
@@ -24,85 +27,87 @@ Admin Dashboard - Quiz-Master
                 </ul>
             </div>
         </nav>
-        
-        <!-- Main Content -->
-        <main class="col-md-10 ml-sm-auto px-4">
+
+        <!-- Main content -->
+        <div class="col-md-10">
             <div class="row">
-                <!-- Stats Cards -->
-                <div class="col-md-4">
-                    <div class="card text-white bg-primary mb-3">
+
+                <!-- Manage Users Card -->
+                <div class="col-md-4 mb-4">
+                    <div class="card glass-card">
+                        <img src="{{ url_for('static', filename='images/user_card.webp') }}" class="card-img-top" alt="Manage Users">
                         <div class="card-body">
-                            <h5 class="card-title">Total Users</h5>
-                            <p class="card-text">{{ total_users }}</p>
-                        </div>
-                    </div>
-                    <a class = "btn btn-primary" href="{{ url_for('manage_users' ) }}">Manage Users</a>
-
-                    
-
-
-
-
-
-
-                </div>
-                <div class="col-md-4">
-                    <div class="card text-white bg-success mb-3">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Quizzes</h5>
-                            <p class="card-text">{{ total_quizzes }}</p>
+                            <h5 class="card-title">Manage Users</h5>
+                            <p class="card-text">
+                                <strong><a href="{{ url_for('manage_users') }}" class="link-info">Total Users: {{ total_users }}</a></strong><br>
+                                Click on edit users to update or delete users.
+                            </p>
+                            <a href="{{ url_for('manage_users') }}" class="btn btn-outline-primary">Manage Users</a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card text-white bg-warning mb-3">
+
+                <!-- Manage Courses Card -->
+                <div class="col-md-4 mb-4">
+                    <div class="card glass-card">
+                        <img src="{{ url_for('static', filename='images/course_card.webp') }}" class="card-img-top" alt="Manage Courses">
                         <div class="card-body">
-                            <h5 class="card-title">Total Questions</h5>
-                            <p class="card-text">{{ total_questions }}</p>
+                            <h5 class="card-title">Manage Courses</h5>
+                            <p class="card-text">Click on the add course button to add a new course and chapters.</p>
+                            <a href="{{url_for('manage_courses')}}" class="btn btn-outline-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Manage Courses</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Quizzes Card (Optional Example) -->
+                <div class="col-md-4 mb-4">
+                    <div class="card glass-card">
+                        <img src="{{ url_for('static', filename='images/quiz_card.webp') }}" class="card-img-top" alt="Total Quizzes">
+                        <div class="card-body">
+                            <h5 class="card-title">Manage Quizzes</h5>
+                            <p class="card-text">You have {{ total_quizzes }} quizzes. Add or edit quizzes here.</p>
+                            <a href="{{url_for('add_quiz')}}" class="btn btn-outline-primary">Manage Quizzes</a>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Recent Quizzes Table -->
-            <h3 class="mt-4">Recent Quizzes</h3>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Quiz Name</th>
-                        <th>Created By</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for quiz in recent_quizzes %}
-                    <tr>
-                        <td>{{ loop.index }}</td>
-                        <td>{{ quiz.name }}</td>
-                        <td>{{ quiz.created_by }}</td>
-                        <td>{{ quiz.created_at.strftime('%Y-%m-%d') }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </main>
-    </div>
-</div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="glass-table p-3">
+                        <h3 class="text-white">Recent Quizzes</h3>
+                        <table class="table table-striped table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Quiz Name</th>
+                                    <th>Chapter</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for quiz in quizzes %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ quiz.name }}</td>
+                                    <td>{{ quiz.chapter.name }}</td> <!-- assuming relationship exists -->
+                                    <td>{{ quiz.date.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ quiz.time.strftime('%H:%M') }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div> <!-- End of Main Content -->
+    </div> <!-- End of Row -->
+</div> <!-- End of Container -->
+
 {% endblock %}
 
-
-
-{% block style %}
-<style>
-    h1,h2{
-        text-align: center;
-
-
-    }
-
-
-</style>
-    
-{% endblock %}
 

@@ -46,6 +46,7 @@ class User(db.Model,UserMixin):
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.Text)
     chapters = db.relationship('Chapter', backref='course', lazy=True)
 
 class Chapter(db.Model):

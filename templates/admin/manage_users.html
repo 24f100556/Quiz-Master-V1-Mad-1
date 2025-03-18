@@ -3,15 +3,18 @@
 {% block content %}
     
 
-<h2>User Management</h2>
+<h2 style="text-align : center;">User Management</h2>
+<div class="d-flex justify-content-end mb-3">
+  <a href="{{ url_for('add_user') }}" class="btn btn-success"><i class="fa-solid fa-user-plus"></i> Add User</a>
+</div>
 
-<table class="table table-striped">
-  <thead>
+<table class="table table-striped table-hover ">
+  <thead class = 'table-dark'>
     <tr>
       <th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Level</th><th>Dob</th><th>Actions</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody class="table-info">
     {% for user in users %}
       <tr>
         <td>{{ user.id }}</td>
@@ -21,14 +24,15 @@
         <td>{{ user.level }}</td>
         <td>{{ user.dob }}</td>
         <td>
-          <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="btn btn-primary btn-sm">Edit</a>
+          <a href="{{ url_for('admin_edit_user', user_id=user.id) }}" class="btn btn-primary btn-sm"><i class="fa-solid fa-user-pen"></i> Update</a>
 
           <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?');">
+              <i class="fa-solid fa-user-slash"></i>
                 Delete
             </button>
         </form>
-        
+        </td>
         
       </tr>
     {% endfor %}
@@ -37,7 +41,9 @@
 
 </table>
 
-<a href="{{ url_for('add_user') }}" class="btn btn-success">Add User</a>
+
+
+
 
 
 {% endblock %}

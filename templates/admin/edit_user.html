@@ -3,7 +3,7 @@
 {% block content %}
     
 
-<h2>Edit User: {{ user.username }}</h2>
+<h2>Update User: {{ user.username }}</h2>
 
 <form method="POST">
    
@@ -32,7 +32,7 @@
     </div>
 
 
-    <button type="submit" class="btn btn-success">Save Changes</button>
+    <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
     <a href="{{ url_for('manage_users') }}" class="btn btn-secondary">Cancel</a>
 </form>
 {% endblock %}

@@ -3,7 +3,7 @@ from app import app
 from models import db, User, Course, Chapter, Quiz, Question, Option, Score
 from datetime import datetime 
 from flask_login import login_user , login_required , logout_user, current_user
-import sqlite3
+
 
 
 
@@ -23,10 +23,12 @@ def index():
 @login_required
 def admin():
     user = current_user
+    quizzes = Quiz.query.all()
+
     if not user.is_admin:
         flash('YOU ARE NOT AUTHORIZED TO VIEW THIS PAGE.',category = 'error')
         return redirect(url_for('index'))
-    return render_template('admin/admin.html',user = current_user, total_users = User.query.count())
+    return render_template('admin/admin.html',user = current_user, total_users = User.query.count(),quizzes = quizzes)
 
 
 
@@ -201,4 +203,176 @@ def delete_user(user_id):
     
     
 
-    
+@app.route('/admin/courses')
+def manage_courses():
+    courses = Course.query.all()
+    return render_template('admin/courses.html', courses=courses,user = current_user)
+
+@app.route('/admin/coursses/add_course', methods=['GET', 'POST'])
+def add_course():
+    if request.method == 'POST':
+        course_name = request.form['name']
+        description = request.form['description']
+        if course_name:
+            new_course = Course(name=course_name,description=description)
+            description = description if description else None 
+            db.session.add(new_course)
+            db.session.commit()
+            flash('Course added successfully!', 'success')
+            return redirect(url_for('manage_courses'))
+    return render_template('admin/add_course.html',user = current_user)
+
+@app.route('/admin/courses/delete/<int:course_id>', methods=['POST'])
+def delete_course(course_id):
+    course = Course.query.get_or_404(course_id)
+    db.session.delete(course)
+    db.session.commit()
+    flash('Course deleted successfully!', 'success')
+  
+    return redirect(url_for('manage_courses'))  
+
+
+
+
+
+
+@app.route('/admin/course/<int:course_id>/add_chapter', methods=['GET', 'POST'])
+def add_chapter(course_id):
+    course = Course.query.get_or_404(course_id)
+    chapters = Chapter.query.filter_by(course_id=course_id).all()
+    if request.method == 'POST':
+        chapter_name = request.form['name']
+        description = request.form['description']
+        if chapter_name:
+            new_chapter = Chapter(name=chapter_name, description=description, course=course)
+            db.session.add(new_chapter)
+            db.session.commit()
+            flash('Chapter added successfully!', 'success')
+            return redirect(url_for('manage_courses'))
+    return render_template('admin/add_chapter.html',chapters = chapters, course=course,user = current_user)
+
+
+
+@app.route('/chapter/<int:chapter_id>/delete', methods=['POST'])
+def delete_chapter(chapter_id):
+    chapter = Chapter.query.get_or_404(chapter_id)
+    course_id = chapter.course_id  
+    db.session.delete(chapter)
+    db.session.commit()
+    flash('Chapter  deleted successfully!', 'success')
+  
+
+    return redirect(url_for('add_chapter', course_id=course_id))
+
+
+
+
+
+
+
+@app.route('/admin/add_quiz', methods=['GET', 'POST'])
+def add_quiz():
+    chapters = Chapter.query.all()  
+
+    if request.method == 'POST':
+        quiz_name = request.form.get('name')
+        quiz_date_str = request.form.get('date')
+        quiz_time_str = request.form.get('time')
+        chapter_id = request.form.get('chapter_id')
+
+        quiz_date = datetime.strptime(quiz_date_str, "%Y-%m-%d").date()
+        quiz_time = datetime.strptime(quiz_time_str, "%H:%M").time()    
+
+        
+        new_quiz = Quiz(
+            name=quiz_name,
+            date=quiz_date,
+            time=quiz_time,
+            chapter_id=chapter_id
+        )
+
+        db.session.add(new_quiz)
+        db.session.commit()
+
+        flash('Quiz created successfully!', 'success')
+        return redirect(url_for('add_quiz'))
+
+   
+    quizzes = Quiz.query.all()
+    return render_template('admin/add_quiz.html', quizzes=quizzes, chapters=chapters, user=current_user)
+
+
+@app.route('/admin/quiz/delete/<int:quiz_id>', methods=['POST'])
+def delete_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    db.session.delete(quiz)
+    db.session.commit()
+    return redirect(url_for('add_quiz'))
+
+
+
+@app.route('/admin/quiz/<int:quiz_id>/add_question', methods=['GET', 'POST'])
+def add_question(quiz_id):
+    quiz = Quiz.query.get(quiz_id)
+
+    if request.method == 'POST':
+     
+        statement = request.form['statement']
+        marks = request.form['marks']
+
+        question = Question(
+            statement=statement,
+            marks=marks,
+            quiz_id=quiz_id
+        )
+        db.session.add(question)
+        db.session.commit()  
+
+        
+        options = [
+            request.form['option1'],
+            request.form['option2'],
+            request.form.get('option3'),
+            request.form.get('option4')
+        ]
+
+  
+        correct_option = int(request.form['correct_option']) - 1
+
+        for index, option_text in enumerate(options):
+            if option_text:
+                option = Option(
+                    option_text=option_text,
+                    is_correct=(index == correct_option),
+                    ques_id=question.id
+                )
+                db.session.add(option)
+
+        db.session.commit()
+
+        flash('Question added!', 'success')
+        return redirect(url_for('add_question', quiz_id=quiz_id))
+
+    return render_template('admin/add_question.html', quiz=quiz,user = current_user)
+
+@app.route('/delete_question/<int:question_id>', methods=['POST', 'GET'])
+def delete_question(question_id):
+    question = Question.query.get_or_404(question_id)
+    quiz_id = question.quiz_id  
+
+
+    for option in question.options:
+        db.session.delete(option)
+
+    db.session.delete(question)
+    db.session.commit()
+
+    flash('Question deleted successfully!', 'success')
+    return redirect(url_for('quiz_details', quiz_id=quiz_id,user=current_user))
+
+
+
+@app.route('/admin/quiz/<int:quiz_id>')
+def quiz_details(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    return render_template('admin/quiz_details.html', quiz=quiz,user = current_user)
