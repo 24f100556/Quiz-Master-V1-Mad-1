@@ -1,20 +1,33 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<a href="{{ url_for('add_quiz') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Quiz Management</a>
 
 <div class="container mt-4">
 
     <div class="card mb-4">
         <div class="card-header">
-            <h3>Quiz Details</h3>
+            <h3>Quiz Details   <form action="{{ url_for('delete_quiz', quiz_id=quiz.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete quiz?');">
+                <button type="submit" class="btn  btn-danger float-end"><i class="fa-solid fa-trash"></i> Delete</button>
+            </form> </h3>
         </div>
         <div class="card-body">
             <p><strong>Quiz Name:</strong> {{ quiz.name }}</p>
-            <p><strong>Date:</strong> {{ quiz.date }}</p>
-            <p><strong>Time:</strong> {{ quiz.time }}</p>
+            <p><strong>Date:</strong> {{ quiz.date.strftime('%d-%m-%Y') }}</p>
+            <p><strong>Time:</strong> {{ quiz.time.strftime('%I:%M %p') }}</p>
+            <p><strong>Course:</strong> {{ quiz.chapter.course.name if quiz.chapter else 'Not Assigned' }}</p>
             <p><strong>Chapter:</strong> {{ quiz.chapter.name }}</p>
+           
         </div>
+      
+        <a href="{{ url_for('update_quiz', quiz_id=quiz.id) }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i> Update Quiz</a>
+        <a href="{{ url_for('add_question', quiz_id=quiz.id) }}" class="btn btn-warning mt-3"><i class="fa-solid fa-square-plus"> </i> Add New Question</a>
+      
     </div>
+        
+       
+    
+
 
     <div class="card">
         <div class="card-header">
@@ -45,6 +58,9 @@
                           
                             <a href="{{ url_for('delete_question', question_id=question.id) }}" class="btn btn-danger btn-sm"
                                 onclick="return confirm('Delete this question?');"><i class="fa-solid fa-trash"></i> Delete Question</a>
+
+                            <a href="{{ url_for('update_question', question_id=question.id) }}" class="btn btn-warning btn-sm"><i class="fa-solid fa-pen-to-square"></i> Update Question</a>
+
                         </li>
                     {% endfor %}
                 </ul>
@@ -54,10 +70,9 @@
         </div>
     </div>
 
-    <div class="mb-5">
-    <a href="{{ url_for('add_question', quiz_id=quiz.id) }}" class="btn btn-primary mt-3"><i class="fa-solid fa-square-plus"> </i> Add New Question</a>
-    <a href="{{ url_for('add_quiz') }}" class="btn btn-secondary mt-3"><i class="fa-solid fa-backward"></i> Back to Quizzes</a>
-    </div>
+  
 </div>
+<a href="{{ url_for('add_quiz') }}" class="btn btn-secondary mt-3 mb-3"><i class="fa-solid fa-backward"></i> Back to Quizzes</a>
+
 
 {% endblock %}

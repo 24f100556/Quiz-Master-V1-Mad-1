@@ -222,6 +222,30 @@ def add_course():
             return redirect(url_for('manage_courses'))
     return render_template('admin/add_course.html',user = current_user)
 
+
+@app.route('/admin/courses/update/<int:course_id>', methods=['GET', 'POST'])
+def update_course(course_id):
+    course = Course.query.get_or_404(course_id)
+    if request.method == 'POST':
+        course.name = request.form.get('name')
+        course.description = request.form.get('description') 
+        db.session.commit()
+        flash('Course updated successfully!', 'success')
+        return redirect(url_for('manage_courses'))
+    return render_template('admin/update_course.html', course=course,user = current_user) 
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/admin/courses/delete/<int:course_id>', methods=['POST'])
 def delete_course(course_id):
     course = Course.query.get_or_404(course_id)
@@ -248,8 +272,24 @@ def add_chapter(course_id):
             db.session.add(new_chapter)
             db.session.commit()
             flash('Chapter added successfully!', 'success')
-            return redirect(url_for('manage_courses'))
+            return redirect(url_for('add_chapter', course_id=course_id))
     return render_template('admin/add_chapter.html',chapters = chapters, course=course,user = current_user)
+
+
+
+@app.route('/admin/chapter/<int:chapter_id>/add_chapter/update', methods=['GET', 'POST'])
+def update_chapter(chapter_id):
+    chapter = Chapter.query.get_or_404(chapter_id)
+    if request.method == 'POST':
+        chapter.name = request.form.get('name')
+        chapter.description = request.form.get('description')
+        db.session.commit()
+        flash('Chapter updated successfully!', 'success')
+        return redirect(url_for('add_chapter', course_id=chapter.course_id))
+    return render_template('admin/update_chapter.html', chapter=chapter,user = current_user)
+
+
+
 
 
 
@@ -260,8 +300,6 @@ def delete_chapter(chapter_id):
     db.session.delete(chapter)
     db.session.commit()
     flash('Chapter  deleted successfully!', 'success')
-  
-
     return redirect(url_for('add_chapter', course_id=course_id))
 
 
@@ -277,12 +315,12 @@ def add_quiz():
     if request.method == 'POST':
         quiz_name = request.form.get('name')
         quiz_date_str = request.form.get('date')
-        quiz_time_str = request.form.get('time')
+        quiz_time = datetime.strptime(request.form.get('time') , "%I:%M %p").time()
+
         chapter_id = request.form.get('chapter_id')
 
         quiz_date = datetime.strptime(quiz_date_str, "%Y-%m-%d").date()
-        quiz_time = datetime.strptime(quiz_time_str, "%H:%M").time()    
-
+        
         
         new_quiz = Quiz(
             name=quiz_name,
@@ -302,12 +340,38 @@ def add_quiz():
     return render_template('admin/add_quiz.html', quizzes=quizzes, chapters=chapters, user=current_user)
 
 
+@app.route('/admin/quiz/update/<int:quiz_id>', methods=['GET', 'POST'])
+def update_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+    chapters = Chapter.query.all()
+
+    if request.method == 'POST':
+        quiz.name = request.form.get('name')
+        quiz.date = datetime.strptime(request.form.get('date'), "%Y-%m-%d").date()
+        quiz.time = datetime.strptime(request.form.get('time') , "%I:%M %p").time()
+        quiz.chapter_id = request.form.get('chapter_id')
+        db.session.commit()
+        flash('Quiz updated successfully!', 'success')
+        return redirect(url_for('quiz_details', quiz_id=quiz.id))
+
+    return render_template('admin/update_quiz.html', quiz=quiz, chapters=chapters,user = current_user)
+
+
+
+
 @app.route('/admin/quiz/delete/<int:quiz_id>', methods=['POST'])
 def delete_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
     db.session.delete(quiz)
     db.session.commit()
     return redirect(url_for('add_quiz'))
+
+
+@app.route('/admin/quiz/<int:quiz_id>')
+def quiz_details(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+   
+    return render_template('admin/quiz_details.html', quiz=quiz,user = current_user)
 
 
 
@@ -351,11 +415,29 @@ def add_question(quiz_id):
         db.session.commit()
 
         flash('Question added!', 'success')
-        return redirect(url_for('add_question', quiz_id=quiz_id))
+        return redirect(url_for('quiz_details', quiz_id=quiz_id))
 
     return render_template('admin/add_question.html', quiz=quiz,user = current_user)
 
-@app.route('/delete_question/<int:question_id>', methods=['POST', 'GET'])
+
+
+
+@app.route('/admin/question/<int:question_id>/update', methods=['GET', 'POST'])
+def update_question(question_id):
+    question = Question.query.get_or_404(question_id)
+    if request.method == 'POST':
+        question.statement = request.form.get('statement')
+        question.marks = request.form.get('marks')
+        db.session.commit()
+        flash('Question updated successfully!', 'success')
+        return redirect(url_for('quiz_details', quiz_id=question.quiz_id))
+
+    return render_template('admin/update_question.html', question=question,user = current_user, quiz=question.quiz)
+
+
+
+
+@app.route('/admin/delete_question/<int:question_id>', methods=['POST', 'GET'])
 def delete_question(question_id):
     question = Question.query.get_or_404(question_id)
     quiz_id = question.quiz_id  
@@ -372,7 +454,4 @@ def delete_question(question_id):
 
 
 
-@app.route('/admin/quiz/<int:quiz_id>')
-def quiz_details(quiz_id):
-    quiz = Quiz.query.get_or_404(quiz_id)
-    return render_template('admin/quiz_details.html', quiz=quiz,user = current_user)
+

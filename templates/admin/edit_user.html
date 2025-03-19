@@ -1,9 +1,10 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    
+
 
 <h2>Update User: {{ user.username }}</h2>
+
 
 <form method="POST">
    
@@ -33,6 +34,6 @@
 
 
     <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
-    <a href="{{ url_for('manage_users') }}" class="btn btn-secondary">Cancel</a>
+    <a href="{{ url_for('manage_users') }}" class="btn btn-outline-secondary">Back to User management</a>
 </form>
 {% endblock %}

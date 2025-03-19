@@ -1,6 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block content %}
+<a href="{{ url_for('add_quiz') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Quiz Management</a>
 
 <div class="container mt-4">
     <h3>Add Question to Quiz: {{ quiz.name }}</h3>

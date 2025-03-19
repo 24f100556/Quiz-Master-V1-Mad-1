@@ -5,8 +5,12 @@ Register Quiz-Master
 {% endblock %}
 
 {% block head %}
-<link rel = 'stylesheet' href = "{{url_for('static', filename = 'css/register.css')}}" >   
+<link rel = 'stylesheet' href = "{{url_for('static', filename = 'css/register.css')}}" > 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}
+
 
 
 
@@ -34,7 +38,7 @@ Register Quiz-Master
 
 
     <label for="dob" class="form-label">Date of Birth:
-        <input type="date" id="dob" name="dob" class="form-control" >
+        <input type="text" id="dob" name="dob" class="form-control" >
     </label>
          
 
@@ -56,3 +60,12 @@ Register Quiz-Master
  
 {%endblock%}
 
+{% block script %}
+<script>
+
+flatpickr("#dob", {
+    dateFormat: "Y-m-d" 
+  });
+
+</script>
+{% endblock %}

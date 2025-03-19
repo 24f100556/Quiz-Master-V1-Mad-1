@@ -7,20 +7,20 @@
 
 <div class="card mb-4">
 <div class="card-header">
-    <h4>Add a Course"</h4>
+    <h4>Update Course</h4>
 </div>
 <div class="card-body">
     <form method="POST">
         <div class="mb-3">
             <lable for = "name" class = "form-lable">Course Name :
-                <input type = 'text' name = 'name' id="name" class = 'form-control' required />
+                <input type = 'text' name = 'name' id="name" class = 'form-control' value="{{course.name}}"  >
             </lable>
         </div>
         <div class="mb-3">
-            <label for="description" class="form-label">Course Description</label>
-            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            <label for="description" class="form-label" >Course Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3">{{course.description}}</textarea>
         </div>
-        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-square-plus"></i> Add Course</button>
+        <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Update Course</button>
     </form>
 </div>
 </div>

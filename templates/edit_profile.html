@@ -8,6 +8,9 @@ Edit Profile - Quiz-Master
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_profile.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}
 
 {% block content %}
@@ -51,3 +54,12 @@ Edit Profile - Quiz-Master
     </form>
 {% endblock %}
 
+{% block script %}
+<script>
+
+flatpickr("#dob", {
+    dateFormat: "Y-m-d" 
+  });
+
+</script>
+{% endblock %}

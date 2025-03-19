@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+
+<div class="container py-5">
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Update Chapter </h4>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="chapterName" class="form-label">Chapter Name</label>
+                <input type="text" class="form-control" id="chapterName" name="name" value= {{chapter.name}} >
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Chapter Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3">{{chapter.description}}</textarea>
+            </div>
+            <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"> </i> Update Chapter</button>
+        </form>
+    </div>
+</div>
+{%endblock%}

@@ -1,7 +1,17 @@
 {% extends 'layout.html' %}
 
+{%block head%}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
+
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+{%endblock%}
+
+
 {% block content %}
-    
+<a href="{{ url_for('admin') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+<br>
 
 <div class="container mt-4">
     <div class="card mb-4">
@@ -20,11 +30,12 @@
                 </div>
                 <div class="mb-3">
                     <label for="quizTime" class="form-label">Time</label>
-                    <input type="time" class="form-control" id="quizTime" name="time" required>
+                    <input type="text" class="form-control" id="quiztime" name="time" required>
                 </div>
+                
                 <div class="mb-3">
                     <label for="chapterSelect" class="form-label">Select Chapter</label>
-                    <select class="form-select" id="chapterSelect" name="chapter_id" required>
+                    <select class="form-select" style="width: auto; min-width: 500px;" id="chapterSelect" name="chapter_id" required>
                         <option value="">Select a Chapter</option>
                         {% for chapter in chapters %}
                             <option value="{{ chapter.id }}">{{ chapter.name }} ({{ chapter.course.name }})</option>
@@ -48,14 +59,12 @@
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>{{ loop.index }}.</strong> {{ quiz.name }}<br>
-                                Chapter: {{ quiz.chapter.name }} | Date: {{ quiz.date }} | Time: {{ quiz.time }}
+                                Chapter: {{ quiz.chapter.name }} | Date: {{ quiz.date.strftime('%d-%m-%Y') }} | Time: {{ quiz.time.strftime('%I:%M %p') }}
                             </div>
                             <div>
-                                <a href="{{ url_for('quiz_details', quiz_id=quiz.id) }}" class="btn btn-sm btn-info"><i class="fa-solid fa-eye"></i> View Quiz Details</a>
-                                <a href="{{ url_for('add_question', quiz_id=quiz.id) }}" class="btn btn-sm btn-success"><i class="fa-solid fa-plus"></i> Add Questions</a>
-                                <form action="{{ url_for('delete_quiz', quiz_id=quiz.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete quiz?');">
-                                    <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> Delete</button>
-                                </form>
+                                <a href="{{ url_for('quiz_details', quiz_id=quiz.id) }}" class="btn  btn-warning"><i class="fa-solid fa-bars-progress"></i> Manage Quiz</a>
+                               
+                              
                             </div>
                         </li>
                     {% endfor %}
@@ -67,4 +76,20 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block script %}
+
+<script>
+flatpickr("#quiztime", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "h:i K",  
+    time_24hr: false     
+});
+
+flatpickr("#quizDate", {
+    dateFormat: "Y-m-d" 
+  });
+</script>
 {% endblock %}

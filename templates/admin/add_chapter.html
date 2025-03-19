@@ -1,5 +1,6 @@
 {% extends 'layout.html' %}
 {% block content %}
+<a href="{{ url_for('manage_courses') }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Course Mangement</a>
 
 <div class="container py-5">
    
@@ -39,9 +40,12 @@
                             <strong>{{ loop.index }}.</strong> {{ chapter.name }}<br>
                             <small class="text-muted">{{ chapter.description or 'No description' }}</small>
                         </div>
+                        
                         <form action="{{ url_for('delete_chapter', chapter_id=chapter.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this chapter?');">
+                            <a href="{{ url_for('update_chapter', chapter_id=chapter.id) }}" class="btn btn-sm btn-primary"><i class="fa-solid fa-pen-to-square"></i> Update chapter</a>
                             <button type="submit" class="btn btn-sm btn-danger"><i class="fa-solid fa-trash"></i> Delete</button>
                         </form>
+                      
                     </li>
                 {% endfor %}
             </ul>

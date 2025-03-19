@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<a href="{{ url_for('quiz_details',quiz_id=quiz.id) }}" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Back to Quiz Details</a>
+
+<div class="container mt-4">
+    <h3>Update Question to Quiz: {{ quiz.name }}</h3>
+
+    <form method="POST">
+        <div class="mb-3">
+            <label for="statement" class="form-label">Question Statement</label>
+            <textarea class="form-control" id="statement" name="statement" rows="3"    required>{{question.statement}} </textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="marks" class="form-label">Marks</label>
+            <input type="number" class="form-control" id="marks" name="marks" min="1" value="{{question.marks}}"required>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Update Question</button>
+        <a href="{{ url_for('add_quiz') }}" class="btn btn-secondary">Back to Quizzes</a>
+    </form>
+</div>
+
+{% endblock %}
