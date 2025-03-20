@@ -1,0 +1,21 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+}
+
+
+.card {
+   
+    padding: 20px;
+    width: 500px;
+    text-align: center;
+    transition: 0.3s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0px 0px 50px rgba(0, 255, 255, 0.9);
+    transform: translateY(-5px);
+}

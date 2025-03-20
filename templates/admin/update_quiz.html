@@ -31,7 +31,10 @@
                     <label for="quizTime" class="form-label">Time</label>
                     <input type="text" class="form-control" id="quiztime" name="time" value="{{ quiz.time.strftime('%I:%M %p') }}">
                 </div>
-                
+                <div class="mb-3">
+                    <label for="quizDuration" class="form-label">Duration (minutes)</label>
+                    <input type="text" class="form-control" id="quizduration" name="duration_minutes" value="{{ quiz.duration_minutes }}">
+                </div>
                 <div class="mb-3">
                     <label for="chapterSelect" class="form-label">Select Chapter</label>
                     <select class="form-select" style="width: auto; min-width: 500px;" id="chapterSelect" name="chapter_id">

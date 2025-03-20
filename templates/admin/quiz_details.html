@@ -17,7 +17,7 @@
             <p><strong>Time:</strong> {{ quiz.time.strftime('%I:%M %p') }}</p>
             <p><strong>Course:</strong> {{ quiz.chapter.course.name if quiz.chapter else 'Not Assigned' }}</p>
             <p><strong>Chapter:</strong> {{ quiz.chapter.name }}</p>
-           
+            <p><strong>Duration:</strong> {{ quiz.duration_minutes }} </p>
         </div>
       
         <a href="{{ url_for('update_quiz', quiz_id=quiz.id) }}" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i> Update Quiz</a>

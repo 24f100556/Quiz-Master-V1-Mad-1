@@ -32,6 +32,11 @@
                     <label for="quizTime" class="form-label">Time</label>
                     <input type="text" class="form-control" id="quiztime" name="time" required>
                 </div>
+                <div class="mb-3">
+                    <label for="quizDuration" class="form-label">Duration (in minutes)</label>
+                    <input type="number" class="form-control" id="quizDuration" name="duration_minutes" min="1" required>
+                </div>
+                
                 
                 <div class="mb-3">
                     <label for="chapterSelect" class="form-label">Select Chapter</label>
@@ -59,7 +64,7 @@
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>{{ loop.index }}.</strong> {{ quiz.name }}<br>
-                                Chapter: {{ quiz.chapter.name }} | Date: {{ quiz.date.strftime('%d-%m-%Y') }} | Time: {{ quiz.time.strftime('%I:%M %p') }}
+                                Chapter: {{ quiz.chapter.name }} | Date: {{ quiz.date.strftime('%d-%m-%Y') }} | Time: {{ quiz.time.strftime('%I:%M %p') }} | Duration: {{ quiz.duration_minutes }} min
                             </div>
                             <div>
                                 <a href="{{ url_for('quiz_details', quiz_id=quiz.id) }}" class="btn  btn-warning"><i class="fa-solid fa-bars-progress"></i> Manage Quiz</a>

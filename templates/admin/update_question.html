@@ -16,11 +16,28 @@
             <label for="marks" class="form-label">Marks</label>
             <input type="number" class="form-control" id="marks" name="marks" min="1" value="{{question.marks}}"required>
         </div>
+        <hr>
 
+        <h5>Options</h5>
+        {% for option in options %}
+        <div class="mb-3">
+            <label for="option_{{ option.id }}" class="form-label">Option {{ loop.index }}</label>
+            <input type="text" class="form-control" id="option_{{ option.id }}" name="option_{{ option.id }}" value="{{ option.option_text }}" required>
+    
+            <div class="form-check mt-2">
+                <input class="form-check-input" type="checkbox" id="is_correct_{{ option.id }}" name="is_correct_{{ option.id }}"
+                {% if option.is_correct %} checked {% endif %}>
+                <label class="form-check-label" for="is_correct_{{ option.id }}">Correct Answer</label>
+            </div>
+        </div>
+        {% endfor %}
+        <hr>
 
+        <div class="mb-5">
+          
         <button type="submit" class="btn btn-primary">Update Question</button>
         <a href="{{ url_for('add_quiz') }}" class="btn btn-secondary">Back to Quizzes</a>
-    </form>
+        </div>
 </div>
 
 {% endblock %}

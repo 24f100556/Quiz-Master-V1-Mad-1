@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Search Results for "{{ query }}"</h3>
+
+    {% if results.users %}
+        <h4 class="mt-3">Users</h4>
+        <ul class="list-group mb-3">
+            {% for user in results.users %}
+                <li class="list-group-item">
+                    {{ user.name }} ({{ user.username }}) - {{ user.email }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if results.courses %}
+        <h4 class="mt-3">Subjects</h4>
+        <ul class="list-group mb-3">
+            {% for course in results.courses %}
+                <li class="list-group-item">
+                    {{ course.name }} - {{ course.description }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if results.quizzes %}
+        <h4 class="mt-3">Quizzes</h4>
+        <ul class="list-group mb-3">
+            {% for quiz in results.quizzes %}
+                <li class="list-group-item">
+                    {{ quiz.name }} ({{ quiz.date }})
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if results.questions %}
+        <h4 class="mt-3">Questions</h4>
+        <ul class="list-group mb-3">
+            {% for question in results.questions %}
+                <li class="list-group-item">
+                    {{ question.statement }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% if results|length == 0 %}
+        <p class="text-muted">No results found.</p>
+    {% endif %}
+</div>
+{% endblock %}

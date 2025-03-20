@@ -1,23 +1,14 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from app import app
 from models import db, User, Course, Chapter, Quiz, Question, Option, Score
-from datetime import datetime 
+from datetime import datetime,timedelta
 from flask_login import login_user , login_required , logout_user, current_user
 
 
 
 
 
-@app.route('/')
-@login_required
-def index():
-    user = current_user
-    if user.is_admin:
-        return redirect(url_for('admin'))
-    else:
-         return render_template('index.html',user = current_user)
     
-
 
 @app.route('/admin')
 @login_required
@@ -147,8 +138,8 @@ def edit_profile():
 
         db.session.commit()
         flash('Profile updated successfully!', category='success')
-        return redirect(url_for('edit_profile'))
-    return render_template('edit_profile.html',user = current_user)
+        return redirect(url_for('profile'))
+    return render_template('edit_profile.html',show_nav=False,user = current_user)
 
 @app.route('/dashboard')
 @login_required  
@@ -320,13 +311,17 @@ def add_quiz():
         chapter_id = request.form.get('chapter_id')
 
         quiz_date = datetime.strptime(quiz_date_str, "%Y-%m-%d").date()
-        
+        duration_minutes = request.form.get('duration_minutes')
+
+
+
         
         new_quiz = Quiz(
             name=quiz_name,
             date=quiz_date,
             time=quiz_time,
-            chapter_id=chapter_id
+            chapter_id=chapter_id,
+            duration_minutes=duration_minutes
         )
 
         db.session.add(new_quiz)
@@ -349,6 +344,7 @@ def update_quiz(quiz_id):
         quiz.name = request.form.get('name')
         quiz.date = datetime.strptime(request.form.get('date'), "%Y-%m-%d").date()
         quiz.time = datetime.strptime(request.form.get('time') , "%I:%M %p").time()
+        quiz.duration_minutes = request.form.get('duration_minutes')
         quiz.chapter_id = request.form.get('chapter_id')
         db.session.commit()
         flash('Quiz updated successfully!', 'success')
@@ -425,14 +421,21 @@ def add_question(quiz_id):
 @app.route('/admin/question/<int:question_id>/update', methods=['GET', 'POST'])
 def update_question(question_id):
     question = Question.query.get_or_404(question_id)
+    options = Option.query.filter_by(ques_id=question.id).all()
     if request.method == 'POST':
         question.statement = request.form.get('statement')
         question.marks = request.form.get('marks')
+     
+        for option in options:
+            option_text = request.form.get(f'option_{option.id}')
+            is_correct = request.form.get(f'is_correct_{option.id}') == 'on'
+            option.option_text = option_text
+            option.is_correct = is_correct
         db.session.commit()
         flash('Question updated successfully!', 'success')
         return redirect(url_for('quiz_details', quiz_id=question.quiz_id))
 
-    return render_template('admin/update_question.html', question=question,user = current_user, quiz=question.quiz)
+    return render_template('admin/update_question.html', question=question,user = current_user, quiz=question.quiz,options=options)
 
 
 
@@ -452,6 +455,407 @@ def delete_question(question_id):
     flash('Question deleted successfully!', 'success')
     return redirect(url_for('quiz_details', quiz_id=quiz_id,user=current_user))
 
+
+
+
+#-------------------------User Routes------------------------------------------------
+
+
+
+@app.route('/')
+@login_required
+def index():
+    user = current_user
+    quizzes = Quiz.query.all()
+
+    available_quizzes = []
+    upcoming_quizzes = []
+    ended_quizzes = []
+
+    now = datetime.now()
+
+    for quiz in quizzes:
+        quiz_start = datetime.combine(quiz.date, quiz.time)
+
+        # Validate duration_minutes
+        try:
+            duration = float(quiz.duration_minutes)
+            quiz_end = quiz_start + timedelta(minutes=duration)
+        except (TypeError, ValueError):
+            duration = None
+            quiz_end = None
+
+        # Upcoming quiz: starts after now
+        if quiz_start > now:
+            upcoming_quizzes.append({
+                'quiz': quiz,
+                'start': quiz_start,
+                'end': quiz_end
+            })
+
+        # Ended quiz: quiz_end exists AND now is after quiz_end
+        elif quiz_end and now > quiz_end:
+            ended_quizzes.append({
+                'quiz': quiz,
+                'start': quiz_start,
+                'end': quiz_end
+            })
+
+        # Available quiz: already started and either no end time or still ongoing
+        elif quiz_start <= now and (quiz_end is None or now <= quiz_end):
+            available_quizzes.append({
+                'quiz': quiz,
+                'start': quiz_start,
+                'end': quiz_end
+            })
+
+    if user.is_admin:
+        return redirect(url_for('admin'))
+
+    return render_template(
+        'index.html',
+        user=user,
+        available_quizzes=available_quizzes,
+        upcoming_quizzes=upcoming_quizzes,
+        ended_quizzes=ended_quizzes
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# @app.route('/start_quiz/<int:quiz_id>', methods=['GET', 'POST'])
+# @login_required
+# def start_quiz(quiz_id):
+#     quiz = Quiz.query.get_or_404(quiz_id)
+
+#     # Step 1: Calculate quiz start and end datetimes
+#     quiz_start = datetime.combine(quiz.date, quiz.time)
+
+#     # Validate and convert duration_minutes
+#     duration_minutes = int(quiz.duration_minutes) if quiz.duration_minutes and str(quiz.duration_minutes).isdigit() else None
+
+#     quiz_end = quiz_start + timedelta(minutes=duration_minutes) if duration_minutes else None
+  
+
+
+#     # Step 2: Get current time
+#     current_time = datetime.now()
+
+#     # Step 3: Validate time window
+#     if current_time < quiz_start:
+#         flash(f"The quiz hasn't started yet! Starts at {quiz_start.strftime('%Y-%m-%d %I:%M %p')}.", "warning")
+#         return redirect(url_for('index'))
+
+#     if quiz_end and current_time > quiz_end:
+#         flash("The quiz has already ended!", "danger")
+#         return redirect(url_for('index'))
+
+#     # Step 4: Handle form submission (when user submits answers)
+#     if request.method == 'POST':
+#         scored_marks = 0
+#         total_marks = 0
+
+#         for question in quiz.questions:
+#             total_marks += question.marks
+#             selected_option_id = request.form.get(f'question_{question.id}')
+            
+#             if selected_option_id:
+#                 selected_option = Option.query.get(int(selected_option_id))
+
+#                 if selected_option and selected_option.is_correct:
+#                     scored_marks += question.marks
+
+#         percentage_score = (scored_marks / total_marks) * 100 if total_marks > 0 else 0
+
+#         new_score = Score(
+#             user_id=current_user.id,
+#             quiz_id=quiz.id,
+#             total_score=scored_marks,
+#         )
+#         db.session.add(new_score)
+#         db.session.commit()
+
+#         flash(f'You scored {scored_marks}/{total_marks} ({percentage_score:.2f}%)', 'success')
+#         return redirect(url_for('index'))
+
+#     # Step 5: Render quiz attempt page if within allowed time window
+#     return render_template('start_quiz.html', quiz=quiz, user=current_user, quiz_start=quiz_start, quiz_end=quiz_end)
+
+
+
+
+@app.route('/start_quiz/<int:quiz_id>', methods=['GET', 'POST'])
+@login_required
+def start_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+
+    # Step 1: Calculate quiz start and end datetimes
+    quiz_start = datetime.combine(quiz.date, quiz.time)
+
+    # Validate and convert duration_minutes (SAME AS OLD)
+    duration_minutes = int(quiz.duration_minutes) if quiz.duration_minutes and str(quiz.duration_minutes).isdigit() else None
+
+    quiz_end = quiz_start + timedelta(minutes=duration_minutes) if duration_minutes else None
+
+    # Step 2: Get current time
+    current_time = datetime.now()
+
+    # Step 3: Validate time window
+    if current_time < quiz_start:
+        flash(f"The quiz hasn't started yet! Starts at {quiz_start.strftime('%Y-%m-%d %I:%M %p')}.", "warning")
+        return redirect(url_for('index'))
+
+    if quiz_end and current_time > quiz_end:
+        flash("The quiz has already ended!", "danger")
+        return redirect(url_for('index'))
+
+    # Prepare feedback data
+    feedback = []
+    scored_marks = 0
+    total_marks = 0
+    percentage_score = 0
+
+    # Step 4: Handle form submission (when user submits answers)
+    if request.method == 'POST':
+        for question in quiz.questions:
+            total_marks += question.marks
+            selected_option_id = request.form.get(f'question_{question.id}')
+
+            selected_option = None
+            is_correct = False
+
+            if selected_option_id:
+                selected_option = Option.query.get(int(selected_option_id))
+                if selected_option and selected_option.is_correct:
+                    scored_marks += question.marks
+                    is_correct = True
+
+            feedback.append({
+                'question': question,
+                'selected_option': selected_option,
+                'is_correct': is_correct,
+                'accepted_options': [opt for opt in question.options if opt.is_correct],
+                'score': question.marks if is_correct else 0
+            })
+
+        percentage_score = (scored_marks / total_marks) * 100 if total_marks > 0 else 0
+
+        new_score = Score(
+            user_id=current_user.id,
+            quiz_id=quiz.id,
+            total_score=scored_marks,
+        )
+        db.session.add(new_score)
+        db.session.commit()
+
+        flash(f'You scored {scored_marks}/{total_marks} ({percentage_score:.2f}%)', 'success')
+
+        # ✅ Instead of redirecting, show feedback on the same page
+        return render_template(
+            'start_quiz.html',
+            quiz=quiz,
+            user=current_user,
+            quiz_start=quiz_start,
+            quiz_end=quiz_end,
+            feedback=feedback,
+            scored_marks=scored_marks,
+            total_marks=total_marks,
+            percentage_score=percentage_score
+        )
+
+    # Step 5: Render quiz attempt page if within allowed time window
+    return render_template(
+        'start_quiz.html',
+        quiz=quiz,
+        user=current_user,
+        quiz_start=quiz_start,
+        quiz_end=quiz_end
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@app.route('/progress')
+@login_required
+def user_progress():
+    scores = Score.query.filter_by(user_id=current_user.id).all()
+
+    progress_data = []
+    total_percentage = 0
+
+    for score in scores:
+        quiz = Quiz.query.get(score.quiz_id)
+
+        # Count number of questions
+        num_questions = len(quiz.questions)
+
+        # Calculate total marks by summing up all question marks
+        total_marks = sum([question.marks for question in quiz.questions])
+
+        # Calculate percentage score based on user's score
+        percentage_score = (score.total_score / total_marks) * 100 if total_marks > 0 else 0
+
+        total_percentage += percentage_score  # Add to total for averaging
+
+        progress_data.append({
+            'quiz_name': quiz.name,
+            'num_questions': num_questions,
+            'total_marks': total_marks,
+            'user_score': score.total_score,
+            'percentage': round(percentage_score, 2),
+            'date': score.timestamp
+        })
+
+    # Calculate average score
+    if len(scores) > 0:
+        average_score = round(total_percentage / len(scores), 2)
+    else:
+        average_score = 0
+
+    return render_template('user_progress.html', 
+                           progress_data=progress_data, 
+                           scores=scores, 
+                           average_score=average_score,
+                           user=current_user)
+
+
+
+@app.route('/view_quiz/<int:quiz_id>')
+@login_required
+def view_quiz(quiz_id):
+    quiz = Quiz.query.get_or_404(quiz_id)
+
+    # Subject is the Course name via the Chapter
+    subject = quiz.chapter.course.name if quiz.chapter and quiz.chapter.course else "N/A"
+
+    # Chapter name
+    chapter = quiz.chapter.name if quiz.chapter else "N/A"
+
+    # Number of questions
+    num_questions = len(quiz.questions)
+
+    # Scheduled Date
+    scheduled_date = quiz.date.strftime('%d/%m/%Y') if quiz.date else "Not Scheduled"
+
+    # Duration in minutes
+    duration = quiz.duration_minutes
+
+    quiz_details = {
+        'id': quiz.id,
+        'subject': subject,
+        'chapter': chapter,
+        'num_questions': num_questions,
+        'scheduled_date': scheduled_date,
+        'time': quiz.time.strftime('%I:%M %p') if quiz.time else "Not Scheduled",
+        'duration': duration
+    }
+
+    return render_template('view_quiz.html', quiz=quiz_details,user=current_user)
+
+
+
+
+
+
+@app.route('/search')
+@login_required
+def search():
+    query = request.args.get('query', '').strip()
+    filter_by = request.args.get('filter', 'all')  # default to 'all' if nothing is selected
+
+    if not query:
+        return render_template('search_results.html', results={}, query=query, user=current_user)
+
+    # For Admin users
+    if current_user.is_admin:
+        results = {}
+
+        if filter_by in ['users', 'all']:
+            users = User.query.filter(User.username.ilike(f'%{query}%')).all()
+            results['users'] = users
+
+        if filter_by in ['subjects', 'all']:
+            courses = Course.query.filter(Course.name.ilike(f'%{query}%')).all()
+            results['courses'] = courses
+
+        if filter_by in ['quizzes', 'all']:
+            quizzes = Quiz.query.filter(Quiz.name.ilike(f'%{query}%')).all()
+            results['quizzes'] = quizzes
+
+        if filter_by in ['questions', 'all']:
+            questions = Question.query.filter(Question.statement.ilike(f'%{query}%')).all()
+            results['questions'] = questions
+
+    # For Normal users
+    else:
+        results = {}
+
+        if filter_by in ['subjects', 'all']:
+            courses = Course.query.filter(Course.name.ilike(f'%{query}%')).all()
+            results['courses'] = courses
+
+        if filter_by in ['quizzes', 'all']:
+            quizzes = Quiz.query.filter(Quiz.name.ilike(f'%{query}%')).all()
+            results['quizzes'] = quizzes
+
+    return render_template('search_results.html', results=results, query=query, user=current_user)
 
 
 

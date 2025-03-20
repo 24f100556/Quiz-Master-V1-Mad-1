@@ -1,0 +1,140 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<a href="{{ url_for('index') }}" class="btn btn-outline-secondary "><i class="fa-solid fa-arrow-left"></i> Exit Exam</a>
+
+<div class="container py-5">
+
+  <div class="card p-4 shadow rounded-3">
+
+    <h2 class="text-center mb-4">{{ quiz.name }}</h2>
+    <p>Quiz started at: {{ quiz_start.strftime('%Y-%m-%d - %I:%M %p') }}</p>
+
+    {% if quiz_end %}
+      <p>Quiz ends at: {{ quiz_end.strftime('%Y-%m-%d - %I:%M %p') }}</p>
+    {% else %}
+      <p>No end time for this quiz.</p>
+    {% endif %}
+
+    {# If feedback exists, show results #}
+    {% if feedback %}
+      <div class="alert alert-info text-center fw-bold">
+        You scored {{ scored_marks }} out of {{ total_marks }} ({{ percentage_score }}%)
+      </div>
+
+      {% for item in feedback %}
+        <div class="border rounded p-4 mb-4 shadow-sm bg-white">
+
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <p class="mb-0 fw-bold">
+              {{ loop.index }}. {{ item.question.statement }}
+            </p>
+            <span class="badge bg-primary">{{ item.question.marks }} points</span>
+          </div>
+
+          {% for option in item.question.options %}
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="radio" disabled
+                {% if item.selected_option and option.id == item.selected_option.id %} checked {% endif %}>
+              <label class="form-check-label">
+                {{ option.option_text }}
+              </label>
+            </div>
+          {% endfor %}
+
+          {% if item.is_correct %}
+            <p class="text-success mt-2">✅ Correct Answer!</p>
+            <p class="text-success">Score: {{ item.score }}</p>
+          {% else %}
+            <p class="text-danger mt-2">❌ Incorrect Answer!</p>
+            <p class="text-danger">Score: {{ item.score }}</p>
+          {% endif %}
+
+          <p class="fw-bold mt-2">Accepted Answers:</p>
+          <ul>
+            {% for ans in item.accepted_options %}
+              <li class="text-success">{{ ans.option_text }}</li>
+            {% endfor %}
+          </ul>
+
+        </div>
+      {% endfor %}
+
+      <a href="{{ url_for('index') }}" class="btn btn-primary w-100 fw-bold py-2">
+        Back to Dashboard
+      </a>
+
+    {% else %}
+      {# Show quiz form if no feedback (user has not submitted yet) #}
+      <form method="POST">
+
+        {% for question in quiz.questions %}
+          <div class="border rounded p-4 mb-4 shadow-sm bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <p class="mb-0 fw-bold">
+                {{ loop.index }}. {{ question.statement }}
+              </p>
+              <span class="badge bg-primary">{{ question.marks }} points</span>
+            </div>
+
+            {% for option in question.options %}
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" 
+                  name="question_{{ question.id }}" 
+                  value="{{ option.id }}" 
+                  id="option_{{ option.id }}">
+                <label class="form-check-label" for="option_{{ option.id }}">
+                  {{ option.option_text }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
+          Submit Quiz
+        </button>
+      </form>
+    {% endif %}
+
+  </div>
+
+</div>
+{% endblock %}
+
+{% block styles %}
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+
+  .card {
+    background-color: #ffffff;
+    border-radius: 12px;
+  }
+
+  .border {
+    border: 1px solid #dee2e6 !important;
+  }
+
+  .form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+
+  .btn-success {
+    background-color: #28a745;
+    border: none;
+  }
+
+  .btn-success:hover {
+    background-color: #218838;
+  }
+
+  .alert-info {
+    background-color: #e9f7fd;
+    border-color: #bee5eb;
+    color: #0c5460;
+  }
+</style>
+{% endblock %}

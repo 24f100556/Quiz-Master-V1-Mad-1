@@ -13,27 +13,14 @@ Admin Dashboard - Quiz-Master
 <h2 class="text-center text-white">Admin Dashboard</h2><br>
 
 <div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-2 d-none d-md-block sidebar glass-sidebar">
-            <div class="sidebar-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('manage_users') }}">Users</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Quizzes</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Results</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Settings</a></li>
-                    <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('logout') }}">Logout</a></li>
-                </ul>
-            </div>
-        </nav>
-
+    <div class="row justify-content-around">
+      
         <!-- Main content -->
         <div class="col-md-10">
             <div class="row">
 
                 <!-- Manage Users Card -->
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4  " >
                     <div class="card glass-card">
                         <img src="{{ url_for('static', filename='images/user_card.webp') }}" class="card-img-top" alt="Manage Users">
                         <div class="card-body">
@@ -45,7 +32,7 @@ Admin Dashboard - Quiz-Master
                             <a href="{{ url_for('manage_users') }}" class="btn btn-outline-primary">Manage Users</a>
                         </div>
                     </div>
-                </div>
+                </div> 
 
                 <!-- Manage Courses Card -->
                 <div class="col-md-4 mb-4">
