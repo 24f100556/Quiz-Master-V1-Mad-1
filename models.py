@@ -41,12 +41,20 @@ class User(db.Model,UserMixin):
 
 
 
-
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     description = db.Column(db.Text)
     chapters = db.relationship('Chapter', backref='course',cascade="all, delete-orphan", lazy=True)
+
+    def to_dict(self):
+            return {
+                'id': self.id,
+                'name': self.name,
+                'description': self.description
+            }
+    
+
 
 class Chapter(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -54,6 +62,16 @@ class Chapter(db.Model):
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     description = db.Column(db.Text)
     quizzes = db.relationship('Quiz', backref='chapter',cascade="all, delete-orphan", lazy=True)
+
+    def to_dict(self):
+            return {
+                'id': self.id,
+                'name': self.name,
+                'description': self.description
+            }
+    
+
+
 
 class Quiz(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,7 +82,19 @@ class Quiz(db.Model):
     chapter_id = db.Column(db.Integer, db.ForeignKey('chapter.id'), nullable=False)
     questions = db.relationship('Question', backref='quiz',cascade="all, delete-orphan", lazy=True)
     scores = db.relationship('Score', backref='quiz', cascade="all, delete-orphan", lazy=True)
+
+    def to_dict(self):
+            return {
+                'id': self.id,
+                'name': self.name,
+                'date': self.date,
+                'duration': self.duration_minutes,
+
+            }
     
+
+
+
 
 class Question(db.Model):
     id = db.Column(db.Integer, primary_key=True)

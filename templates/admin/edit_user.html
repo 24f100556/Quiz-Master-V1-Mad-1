@@ -1,5 +1,13 @@
 {% extends 'layout.html' %}
 
+{% block head %}
+   
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+{% endblock %}
+
 {% block content %}
 
 
@@ -20,10 +28,10 @@
 
 
     <label for="dob" class="form-label">Date of Birth:</label>
-    <input type="date" id="dob" name="dob" class="form-control" value="{{ user.dob.strftime('%Y-%m-%d') if current_user.dob else '' }}">
+    <input type="text" id="dob" name="dob" class="form-control" value="{{ user.dob.strftime('%Y-%m-%d') if user.dob else '' }}">
 
     <div class="mb-3">
-        <label for="level" class="form-label">Choose your level:</label>
+        <label for="level" class="form-label">Update level:</label>
         <select id="level" name="level" class="form-select" required>
             <option value="" disabled>Select level</option>
             <option value="Foundation" {% if user.level == 'Foundation' %}selected{% endif %}>Foundation</option>
@@ -36,4 +44,12 @@
     <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
     <a href="{{ url_for('manage_users') }}" class="btn btn-outline-secondary">Back to User management</a>
 </form>
+{% endblock %}
+
+{% block script %}
+<script>
+    flatpickr("#dob", {
+        dateFormat: "Y-m-d"
+    });
+</script>
 {% endblock %}

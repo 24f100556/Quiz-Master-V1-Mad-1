@@ -16,7 +16,6 @@
       <p>No end time for this quiz.</p>
     {% endif %}
 
-    {# If feedback exists, show results #}
     {% if feedback %}
       <div class="alert alert-info text-center fw-bold">
         You scored {{ scored_marks }} out of {{ total_marks }} ({{ percentage_score }}%)
@@ -60,12 +59,12 @@
         </div>
       {% endfor %}
 
-      <a href="{{ url_for('index') }}" class="btn btn-primary w-100 fw-bold py-2">
+      <a href="{{ url_for('index') }}" class="btn btn-outline-secondary w-100 fw-bold py-2">
         Back to Dashboard
       </a>
 
     {% else %}
-      {# Show quiz form if no feedback (user has not submitted yet) #}
+     
       <form method="POST">
 
         {% for question in quiz.questions %}
@@ -102,39 +101,5 @@
 </div>
 {% endblock %}
 
-{% block styles %}
-<style>
-  body {
-    background-color: #f8f9fa;
-  }
 
-  .card {
-    background-color: #ffffff;
-    border-radius: 12px;
-  }
 
-  .border {
-    border: 1px solid #dee2e6 !important;
-  }
-
-  .form-check-input:checked {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
-  }
-
-  .btn-success {
-    background-color: #28a745;
-    border: none;
-  }
-
-  .btn-success:hover {
-    background-color: #218838;
-  }
-
-  .alert-info {
-    background-color: #e9f7fd;
-    border-color: #bee5eb;
-    color: #0c5460;
-  }
-</style>
-{% endblock %}

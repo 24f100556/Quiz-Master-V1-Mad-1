@@ -15,11 +15,11 @@ Admin Dashboard - Quiz-Master
 <div class="container-fluid">
     <div class="row justify-content-around">
       
-        <!-- Main content -->
+ 
         <div class="col-md-10">
             <div class="row">
 
-                <!-- Manage Users Card -->
+
                 <div class="col-md-4 mb-4  " >
                     <div class="card glass-card">
                         <img src="{{ url_for('static', filename='images/user_card.webp') }}" class="card-img-top" alt="Manage Users">
@@ -34,7 +34,6 @@ Admin Dashboard - Quiz-Master
                     </div>
                 </div> 
 
-                <!-- Manage Courses Card -->
                 <div class="col-md-4 mb-4">
                     <div class="card glass-card">
                         <img src="{{ url_for('static', filename='images/course_card.webp') }}" class="card-img-top" alt="Manage Courses">
@@ -46,7 +45,7 @@ Admin Dashboard - Quiz-Master
                     </div>
                 </div>
 
-                <!-- Total Quizzes Card (Optional Example) -->
+       
                 <div class="col-md-4 mb-4">
                     <div class="card glass-card">
                         <img src="{{ url_for('static', filename='images/quiz_card.webp') }}" class="card-img-top" alt="Total Quizzes">
@@ -59,7 +58,6 @@ Admin Dashboard - Quiz-Master
                 </div>
             </div>
 
-            <!-- Recent Quizzes Table -->
             <div class="row">
                 <div class="col-12">
                     <div class="glass-table p-3">
@@ -79,7 +77,7 @@ Admin Dashboard - Quiz-Master
                                 <tr>
                                     <td>{{ loop.index }}</td>
                                     <td>{{ quiz.name }}</td>
-                                    <td>{{ quiz.chapter.name }}</td> <!-- assuming relationship exists -->
+                                    <td>{{ quiz.chapter.name }}</td> 
                                     <td>{{ quiz.date.strftime('%Y-%m-%d') }}</td>
                                     <td>{{ quiz.time.strftime('%H:%M') }}</td>
                                 </tr>
@@ -91,9 +89,9 @@ Admin Dashboard - Quiz-Master
             </div>
             
 
-        </div> <!-- End of Main Content -->
-    </div> <!-- End of Row -->
-</div> <!-- End of Container -->
+        </div> 
+    </div> 
+</div> 
 
 {% endblock %}
 

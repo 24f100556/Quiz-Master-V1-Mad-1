@@ -1,71 +1,96 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-Register Quiz-Master
+    Register - Quiz-Master
 {% endblock %}
 
 {% block head %}
-<link rel = 'stylesheet' href = "{{url_for('static', filename = 'css/register.css')}}" > 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"> 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
 
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 {% endblock %}
 
+{% block content %}
+
+<div class="card rounded-5 mt-5 mx-auto" style="width: 600px;">
+    <div class="card-body text-primary">
+        
+        <h2 class="text-center mb-4">Register</h2>
+
+        <form method="POST">
+
+      
+            <div class="mb-3 row align-items-center">
+                <label for="email" class="col-sm-4 col-form-label text-end fw-bold">Email Address:</label>
+                <div class="col-sm-8">
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Enter email" required>
+                </div>
+            </div>
 
 
+            <div class="mb-3 row align-items-center">
+                <label for="username" class="col-sm-4 col-form-label text-end fw-bold">Username:</label>
+                <div class="col-sm-8">
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required>
+                </div>
+            </div>
 
-{%block content%}
-<h1>Register</h1>
-<form method = 'post' class = 'mt-5'>
-
-    <label for="email" class='form-label'> Email Address:
-        <input type="text" id="email" name="email" class='form-control' placeholder = "Enter email" required>
-    </label>   
-         
-    <label for="username" class='form-label'> Username:
-        <input type="text" id="username" name="username" class='form-control' required>
-    </label>    
-   
-    <label for="password" class='form-label' > Password:
-        <input type="password" id="password" name="password" class='form-control' required>
-    </label>
-
-    <label for="name" class='form-label'> Name:
-        <input type="text" id="name" name="name" class='form-control' required>
-
-    </label>   
-
-
-
-    <label for="dob" class="form-label">Date of Birth:
-        <input type="text" id="dob" name="dob" class="form-control" >
-    </label>
-         
-
-    <div class="mb-3">
-        <label for="level" class="form-label">Choose your level:</label>
-        <select id="level" name="level" class="form-select" required>
-            <option value="" disabled selected>Select level</option>
-            <option value="Foundation">Foundation</option>
-            <option value="Diploma">Diploma</option>
-            <option value="Degree">Degree</option>
-           
-        </select>
-    </div>
-    
-    <input type="submit" value="Register" class="btn btn-success">
-
-</form>
-         
  
-{%endblock%}
+            <div class="mb-3 row align-items-center">
+                <label for="password" class="col-sm-4 col-form-label text-end fw-bold">Password:</label>
+                <div class="col-sm-8">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required>
+                </div>
+            </div>
+
+
+            <div class="mb-3 row align-items-center">
+                <label for="name" class="col-sm-4 col-form-label text-end fw-bold">Name:</label>
+                <div class="col-sm-8">
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter full name" required>
+                </div>
+            </div>
+
+            <div class="mb-3 row align-items-center">
+                <label for="dob" class="col-sm-4 col-form-label text-end fw-bold">Date of Birth:</label>
+                <div class="col-sm-8">
+                    <input type="text" id="dob" name="dob" class="form-control" placeholder="YYYY-MM-DD">
+                </div>
+            </div>
+
+        
+            <div class="mb-4 row align-items-center">
+                <label for="level" class="col-sm-4 col-form-label text-end fw-bold">Choose your level:</label>
+                <div class="col-sm-8">
+                    <select id="level" name="level" class="form-select" required>
+                        <option value="" disabled selected>Select level</option>
+                        <option value="Foundation">Foundation</option>
+                        <option value="Diploma">Diploma</option>
+                        <option value="Degree">Degree</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-success">Register</button>
+            </div>
+
+            <p class="text-center mb-0">
+                Already registered? <a href="{{ url_for('login') }}">Login</a>
+            </p>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
 
 {% block script %}
 <script>
-
-flatpickr("#dob", {
-    dateFormat: "Y-m-d" 
-  });
-
+    flatpickr("#dob", {
+        dateFormat: "Y-m-d"
+    });
 </script>
 {% endblock %}

@@ -61,7 +61,7 @@ Profile - Quiz-Master
     
 
    
-    <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>   
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger  " onclick="return confirm('Are you sure you want to logout??');">Logout</a>
 
 
 {% endblock %}

@@ -1,4 +1,8 @@
 {% extends 'layout.html' %}
+
+{% block title %} Quiz-Master-Search {% endblock %}
+
+
 {% block content %}
 <div class="container mt-4">
     <h3>Search Results for "{{ query }}"</h3>
@@ -47,8 +51,9 @@
         </ul>
     {% endif %}
 
-    {% if results|length == 0 %}
-        <p class="text-muted">No results found.</p>
+    {% if not results.users and not results.courses and not results.quizzes and not results.questions %}
+    <h4 class="text-muted">No results found.</h4>
     {% endif %}
+
 </div>
 {% endblock %}

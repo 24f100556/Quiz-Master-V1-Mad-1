@@ -1,6 +1,5 @@
-
-
 {% extends 'layout.html' %}
+{% block title %} Quiz-Master-View-Quiz {% endblock %}
 
 
 {% block head %}
@@ -31,7 +30,7 @@
                         <td>{{ quiz.chapter }}</td> 
                     </tr>
                     <tr> 
-                        <th>Number of Questions</th>
+                        <th>No.of Questions</th>
                         <td>{{ quiz.num_questions}}</td>
                      </tr>
                     <tr> 
@@ -45,10 +44,7 @@
         
               </table>
               
-        </p>
-        <a href="{{url_for('index')}}" class="btn btn-outline-secondary bt-sm ">
-            <i class="fa-solid fa-xmark"></i> Close
-        </a>
+        <a href="{{url_for('index')}}" class="btn btn-outline-secondary bt-sm ">Close </a>
     </div>
 </div>
 {%endblock%}

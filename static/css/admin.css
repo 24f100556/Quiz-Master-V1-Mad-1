@@ -6,36 +6,6 @@ body {
     font-family: 'Arial', sans-serif;
 }
 
-/* Sidebar */
-.sidebar {
-    height: 100vh;
-}
-
-.glass-sidebar {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    backdrop-filter: blur(40px);
-    border-radius: 15px;
-    padding: 15px;
-}
-
-.sidebar-sticky ul.nav {
-    margin-top: 20px;
-}
-
-.sidebar a {
-    color: #ffffff;
-    margin-bottom: 10px;
-}
-
-.sidebar a:hover {
-    color: #17a2b8;
-    text-decoration: none;
-}
-
-.sidebar a.active {
-    color: #17a2b8;
-    font-weight: bold;
-}
 
 /* Cards */
 .glass-card {

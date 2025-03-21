@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session,jsonify
 from app import app
 from models import db, User, Course, Chapter, Quiz, Question, Option, Score
 from datetime import datetime,timedelta
@@ -6,22 +6,12 @@ from flask_login import login_user , login_required , logout_user, current_user
 
 
 
-
-
     
 
-@app.route('/admin')
-@login_required
-def admin():
-    user = current_user
-    quizzes = Quiz.query.all()
-
-    if not user.is_admin:
-        flash('YOU ARE NOT AUTHORIZED TO VIEW THIS PAGE.',category = 'error')
-        return redirect(url_for('index'))
-    return render_template('admin/admin.html',user = current_user, total_users = User.query.count(),quizzes = quizzes)
 
 
+
+#----------------------------------------------------------Authentication Routes----------------------------------------------------------------------
 
 
 
@@ -92,59 +82,37 @@ def logout():
     return redirect(url_for('login'))
 
 
-@app.route('/profile', methods=['GET'])
+
+
+
+
+
+
+
+
+#----------------------------------------------------------Admin Routes----------------------------------------------------------------------
+
+
+#----------------------------------------------------------Admin Dashboard----------------------------------------------------------------------
+
+
+
+
+
+@app.route('/admin')
 @login_required
-def profile():
-    return render_template('profile.html', user=current_user)
+def admin():
+    user = current_user
+    quizzes = Quiz.query.all()
+
+    if not user.is_admin:
+        flash('YOU ARE NOT AUTHORIZED TO VIEW THIS PAGE.',category = 'error')
+        return redirect(url_for('index'))
+    return render_template('admin/admin.html',user = current_user, total_users = User.query.count(),quizzes = quizzes)
 
 
 
-
-@app.route('/profile/edit', methods=['GET','POST'])
-@login_required
-def edit_profile():
-    if request.method == 'POST' :
-
-        current_user.username = request.form.get('username')
-        current_user.email = request.form.get('email')
-        current_user.name = request.form.get('name')
-        current_user.level = request.form.get('level')
-
-        dob_str = request.form.get('dob')  
-        if dob_str:
-            current_user.dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
-
-        
-        existing_user = User.query.filter_by(username=current_user.username).first()
-        if existing_user and existing_user.id != current_user.id:
-            flash('Oops! That username is taken.', category='error')
-            return redirect(url_for('edit_profile'))
-
-        existing_email = User.query.filter_by(email=current_user.email).first()
-        if existing_email and existing_email.id != current_user.id:
-            flash('Oops! An account with this email already exists.', category='error')
-            return redirect(url_for('edit_profile'))
-
-        
-        cpassword = request.form.get('cpassword')
-        if not current_user.check_password(cpassword):  
-            flash('Incorrect current password', category='error')
-            return redirect(url_for('edit_profile'))
-
-
-        new_password = request.form.get('password')
-        if new_password:
-            current_user.password = new_password  
-
-        db.session.commit()
-        flash('Profile updated successfully!', category='success')
-        return redirect(url_for('profile'))
-    return render_template('edit_profile.html',show_nav=False,user = current_user)
-
-@app.route('/dashboard')
-@login_required  
-def dashboard():
-    return render_template('dashboard.html',user=current_user) 
+#----------------------------------------------------------Manage users----------------------------------------------------------------------
 
 
 @app.route('/manage_users')
@@ -153,10 +121,19 @@ def manage_users():
     users = User.query.all()
     return render_template('admin/manage_users.html',users=users,user=current_user)
 
+
+
+#----------------------------------------------------------Add user----------------------------------------------------------------------
+
+
 @app.route('/add_user')
 @login_required
 def add_user():
     return redirect(url_for('register'))
+
+
+#----------------------------------------------------------Update User----------------------------------------------------------------------
+
 
 @app.route('/admin/users/edit/<int:user_id>', methods=['GET', 'POST'])
 @login_required  
@@ -181,6 +158,10 @@ def admin_edit_user(user_id):
     return render_template('admin/edit_user.html', user=user)
 
 
+#----------------------------------------------------------Delete User----------------------------------------------------------------------
+
+
+
 @app.route('/admin/users/delete/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
@@ -191,13 +172,20 @@ def delete_user(user_id):
     return redirect(url_for('manage_users'))  
 
 
-    
-    
+
+#----------------------------------------------------------Manage Courses----------------------------------------------------------------------
+
 
 @app.route('/admin/courses')
 def manage_courses():
     courses = Course.query.all()
     return render_template('admin/courses.html', courses=courses,user = current_user)
+
+
+#----------------------------------------------------------Add Course----------------------------------------------------------------------
+
+
+
 
 @app.route('/admin/coursses/add_course', methods=['GET', 'POST'])
 def add_course():
@@ -214,6 +202,11 @@ def add_course():
     return render_template('admin/add_course.html',user = current_user)
 
 
+
+#----------------------------------------------------------Update Course----------------------------------------------------------------------
+
+
+
 @app.route('/admin/courses/update/<int:course_id>', methods=['GET', 'POST'])
 def update_course(course_id):
     course = Course.query.get_or_404(course_id)
@@ -227,13 +220,7 @@ def update_course(course_id):
 
 
 
-
-
-
-
-
-
-
+#----------------------------------------------------------Delete Course----------------------------------------------------------------------
 
 
 
@@ -248,6 +235,7 @@ def delete_course(course_id):
 
 
 
+#----------------------------------------------------------Add Chapter----------------------------------------------------------------------
 
 
 
@@ -267,6 +255,9 @@ def add_chapter(course_id):
     return render_template('admin/add_chapter.html',chapters = chapters, course=course,user = current_user)
 
 
+#----------------------------------------------------------Update Chapter----------------------------------------------------------------------
+
+
 
 @app.route('/admin/chapter/<int:chapter_id>/add_chapter/update', methods=['GET', 'POST'])
 def update_chapter(chapter_id):
@@ -281,7 +272,7 @@ def update_chapter(chapter_id):
 
 
 
-
+#----------------------------------------------------------Delete Chapter----------------------------------------------------------------------
 
 
 @app.route('/chapter/<int:chapter_id>/delete', methods=['POST'])
@@ -294,8 +285,7 @@ def delete_chapter(chapter_id):
     return redirect(url_for('add_chapter', course_id=course_id))
 
 
-
-
+#----------------------------------------------------------Add Quiz----------------------------------------------------------------------
 
 
 
@@ -311,6 +301,7 @@ def add_quiz():
         chapter_id = request.form.get('chapter_id')
 
         quiz_date = datetime.strptime(quiz_date_str, "%Y-%m-%d").date()
+
         duration_minutes = request.form.get('duration_minutes')
 
 
@@ -335,6 +326,11 @@ def add_quiz():
     return render_template('admin/add_quiz.html', quizzes=quizzes, chapters=chapters, user=current_user)
 
 
+
+#----------------------------------------------------------Update Quiz----------------------------------------------------------------------
+
+
+
 @app.route('/admin/quiz/update/<int:quiz_id>', methods=['GET', 'POST'])
 def update_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
@@ -353,6 +349,7 @@ def update_quiz(quiz_id):
     return render_template('admin/update_quiz.html', quiz=quiz, chapters=chapters,user = current_user)
 
 
+#----------------------------------------------------------Delete Quiz----------------------------------------------------------------------
 
 
 @app.route('/admin/quiz/delete/<int:quiz_id>', methods=['POST'])
@@ -362,7 +359,7 @@ def delete_quiz(quiz_id):
     db.session.commit()
     return redirect(url_for('add_quiz'))
 
-
+#----------------------------------------------------------Quiz Details----------------------------------------------------------------------
 @app.route('/admin/quiz/<int:quiz_id>')
 def quiz_details(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
@@ -370,6 +367,8 @@ def quiz_details(quiz_id):
     return render_template('admin/quiz_details.html', quiz=quiz,user = current_user)
 
 
+
+#----------------------------------------------------------Add Question and Options----------------------------------------------------------------------
 
 @app.route('/admin/quiz/<int:quiz_id>/add_question', methods=['GET', 'POST'])
 def add_question(quiz_id):
@@ -416,6 +415,7 @@ def add_question(quiz_id):
     return render_template('admin/add_question.html', quiz=quiz,user = current_user)
 
 
+#----------------------------------------------------------Update Questions----------------------------------------------------------------------
 
 
 @app.route('/admin/question/<int:question_id>/update', methods=['GET', 'POST'])
@@ -438,6 +438,7 @@ def update_question(question_id):
     return render_template('admin/update_question.html', question=question,user = current_user, quiz=question.quiz,options=options)
 
 
+#----------------------------------------------------------Delete Question----------------------------------------------------------------------
 
 
 @app.route('/admin/delete_question/<int:question_id>', methods=['POST', 'GET'])
@@ -458,8 +459,10 @@ def delete_question(question_id):
 
 
 
-#-------------------------User Routes------------------------------------------------
+#----------------------------------------------------------User Routes----------------------------------------------------------------------
 
+
+#----------------------------------------------------------User Dashboard----------------------------------------------------------------------
 
 
 @app.route('/')
@@ -477,7 +480,7 @@ def index():
     for quiz in quizzes:
         quiz_start = datetime.combine(quiz.date, quiz.time)
 
-        # Validate duration_minutes
+     
         try:
             duration = float(quiz.duration_minutes)
             quiz_end = quiz_start + timedelta(minutes=duration)
@@ -485,7 +488,6 @@ def index():
             duration = None
             quiz_end = None
 
-        # Upcoming quiz: starts after now
         if quiz_start > now:
             upcoming_quizzes.append({
                 'quiz': quiz,
@@ -493,7 +495,6 @@ def index():
                 'end': quiz_end
             })
 
-        # Ended quiz: quiz_end exists AND now is after quiz_end
         elif quiz_end and now > quiz_end:
             ended_quizzes.append({
                 'quiz': quiz,
@@ -501,7 +502,6 @@ def index():
                 'end': quiz_end
             })
 
-        # Available quiz: already started and either no end time or still ongoing
         elif quiz_start <= now and (quiz_end is None or now <= quiz_end):
             available_quizzes.append({
                 'quiz': quiz,
@@ -520,77 +520,62 @@ def index():
         ended_quizzes=ended_quizzes
     )
 
+#----------------------------------------------------------User Profile----------------------------------------------------------------------
 
 
 
+@app.route('/profile', methods=['GET'])
+@login_required
+def profile():
+    return render_template('profile.html', user=current_user)
 
 
+#----------------------------------------------------------User Profile Edit----------------------------------------------------------------------
 
 
+@app.route('/profile/edit', methods=['GET','POST'])
+@login_required
+def edit_profile():
+    if request.method == 'POST' :
+
+        current_user.username = request.form.get('username')
+        current_user.email = request.form.get('email')
+        current_user.name = request.form.get('name')
+        current_user.level = request.form.get('level')
+
+        dob_str = request.form.get('dob')  
+        if dob_str:
+            current_user.dob = datetime.strptime(dob_str, "%Y-%m-%d").date()
+
+        
+        existing_user = User.query.filter_by(username=current_user.username).first()
+        if existing_user and existing_user.id != current_user.id:
+            flash('Oops! That username is taken.', category='error')
+            return redirect(url_for('edit_profile'))
+
+        existing_email = User.query.filter_by(email=current_user.email).first()
+        if existing_email and existing_email.id != current_user.id:
+            flash('Oops! An account with this email already exists.', category='error')
+            return redirect(url_for('edit_profile'))
+
+        
+        cpassword = request.form.get('cpassword')
+        if not current_user.check_password(cpassword):  
+            flash('Incorrect current password', category='error')
+            return redirect(url_for('edit_profile'))
 
 
+        new_password = request.form.get('password')
+        if new_password:
+            current_user.password = new_password  
+
+        db.session.commit()
+        flash('Profile updated successfully!', category='success')
+        return redirect(url_for('profile'))
+    return render_template('edit_profile.html',show_nav=False,user = current_user)
 
 
-
-
-# @app.route('/start_quiz/<int:quiz_id>', methods=['GET', 'POST'])
-# @login_required
-# def start_quiz(quiz_id):
-#     quiz = Quiz.query.get_or_404(quiz_id)
-
-#     # Step 1: Calculate quiz start and end datetimes
-#     quiz_start = datetime.combine(quiz.date, quiz.time)
-
-#     # Validate and convert duration_minutes
-#     duration_minutes = int(quiz.duration_minutes) if quiz.duration_minutes and str(quiz.duration_minutes).isdigit() else None
-
-#     quiz_end = quiz_start + timedelta(minutes=duration_minutes) if duration_minutes else None
-  
-
-
-#     # Step 2: Get current time
-#     current_time = datetime.now()
-
-#     # Step 3: Validate time window
-#     if current_time < quiz_start:
-#         flash(f"The quiz hasn't started yet! Starts at {quiz_start.strftime('%Y-%m-%d %I:%M %p')}.", "warning")
-#         return redirect(url_for('index'))
-
-#     if quiz_end and current_time > quiz_end:
-#         flash("The quiz has already ended!", "danger")
-#         return redirect(url_for('index'))
-
-#     # Step 4: Handle form submission (when user submits answers)
-#     if request.method == 'POST':
-#         scored_marks = 0
-#         total_marks = 0
-
-#         for question in quiz.questions:
-#             total_marks += question.marks
-#             selected_option_id = request.form.get(f'question_{question.id}')
-            
-#             if selected_option_id:
-#                 selected_option = Option.query.get(int(selected_option_id))
-
-#                 if selected_option and selected_option.is_correct:
-#                     scored_marks += question.marks
-
-#         percentage_score = (scored_marks / total_marks) * 100 if total_marks > 0 else 0
-
-#         new_score = Score(
-#             user_id=current_user.id,
-#             quiz_id=quiz.id,
-#             total_score=scored_marks,
-#         )
-#         db.session.add(new_score)
-#         db.session.commit()
-
-#         flash(f'You scored {scored_marks}/{total_marks} ({percentage_score:.2f}%)', 'success')
-#         return redirect(url_for('index'))
-
-#     # Step 5: Render quiz attempt page if within allowed time window
-#     return render_template('start_quiz.html', quiz=quiz, user=current_user, quiz_start=quiz_start, quiz_end=quiz_end)
-
+#----------------------------------------------------------Start Quiz----------------------------------------------------------------
 
 
 
@@ -599,18 +584,15 @@ def index():
 def start_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
 
-    # Step 1: Calculate quiz start and end datetimes
     quiz_start = datetime.combine(quiz.date, quiz.time)
 
-    # Validate and convert duration_minutes (SAME AS OLD)
     duration_minutes = int(quiz.duration_minutes) if quiz.duration_minutes and str(quiz.duration_minutes).isdigit() else None
 
     quiz_end = quiz_start + timedelta(minutes=duration_minutes) if duration_minutes else None
 
-    # Step 2: Get current time
+
     current_time = datetime.now()
 
-    # Step 3: Validate time window
     if current_time < quiz_start:
         flash(f"The quiz hasn't started yet! Starts at {quiz_start.strftime('%Y-%m-%d %I:%M %p')}.", "warning")
         return redirect(url_for('index'))
@@ -619,13 +601,12 @@ def start_quiz(quiz_id):
         flash("The quiz has already ended!", "danger")
         return redirect(url_for('index'))
 
-    # Prepare feedback data
     feedback = []
     scored_marks = 0
     total_marks = 0
     percentage_score = 0
 
-    # Step 4: Handle form submission (when user submits answers)
+ 
     if request.method == 'POST':
         for question in quiz.questions:
             total_marks += question.marks
@@ -660,7 +641,7 @@ def start_quiz(quiz_id):
 
         flash(f'You scored {scored_marks}/{total_marks} ({percentage_score:.2f}%)', 'success')
 
-        # ✅ Instead of redirecting, show feedback on the same page
+       
         return render_template(
             'start_quiz.html',
             quiz=quiz,
@@ -670,67 +651,23 @@ def start_quiz(quiz_id):
             feedback=feedback,
             scored_marks=scored_marks,
             total_marks=total_marks,
-            percentage_score=percentage_score
+            percentage_score=percentage_score,
+            show_nav = False
         )
 
-    # Step 5: Render quiz attempt page if within allowed time window
+   
     return render_template(
         'start_quiz.html',
         quiz=quiz,
         user=current_user,
         quiz_start=quiz_start,
-        quiz_end=quiz_end
+        quiz_end=quiz_end,
+        show_nav = False
     )
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#-----------------------------------------------------------User Progress--------------------------------------------------------
 
 @app.route('/progress')
 @login_required
@@ -743,16 +680,13 @@ def user_progress():
     for score in scores:
         quiz = Quiz.query.get(score.quiz_id)
 
-        # Count number of questions
         num_questions = len(quiz.questions)
 
-        # Calculate total marks by summing up all question marks
         total_marks = sum([question.marks for question in quiz.questions])
 
-        # Calculate percentage score based on user's score
         percentage_score = (score.total_score / total_marks) * 100 if total_marks > 0 else 0
 
-        total_percentage += percentage_score  # Add to total for averaging
+        total_percentage += percentage_score  
 
         progress_data.append({
             'quiz_name': quiz.name,
@@ -763,7 +697,6 @@ def user_progress():
             'date': score.timestamp
         })
 
-    # Calculate average score
     if len(scores) > 0:
         average_score = round(total_percentage / len(scores), 2)
     else:
@@ -777,24 +710,22 @@ def user_progress():
 
 
 
+#------------------------------------------------View Quiz--------------------------------------------------------------
+
 @app.route('/view_quiz/<int:quiz_id>')
 @login_required
 def view_quiz(quiz_id):
     quiz = Quiz.query.get_or_404(quiz_id)
 
-    # Subject is the Course name via the Chapter
     subject = quiz.chapter.course.name if quiz.chapter and quiz.chapter.course else "N/A"
 
-    # Chapter name
     chapter = quiz.chapter.name if quiz.chapter else "N/A"
-
-    # Number of questions
     num_questions = len(quiz.questions)
 
-    # Scheduled Date
     scheduled_date = quiz.date.strftime('%d/%m/%Y') if quiz.date else "Not Scheduled"
 
-    # Duration in minutes
+    time = quiz.time.strftime('%I:%M %p') if quiz.time else "Not Scheduled"
+
     duration = quiz.duration_minutes
 
     quiz_details = {
@@ -803,7 +734,7 @@ def view_quiz(quiz_id):
         'chapter': chapter,
         'num_questions': num_questions,
         'scheduled_date': scheduled_date,
-        'time': quiz.time.strftime('%I:%M %p') if quiz.time else "Not Scheduled",
+        'time': time,
         'duration': duration
     }
 
@@ -811,19 +742,18 @@ def view_quiz(quiz_id):
 
 
 
-
-
+#------------------------------------------------------SEARCH BAR--------------------------------------------------------------------
 
 @app.route('/search')
 @login_required
 def search():
     query = request.args.get('query', '').strip()
-    filter_by = request.args.get('filter', 'all')  # default to 'all' if nothing is selected
+    filter_by = request.args.get('filter', 'all')  
 
     if not query:
         return render_template('search_results.html', results={}, query=query, user=current_user)
 
-    # For Admin users
+
     if current_user.is_admin:
         results = {}
 
@@ -843,7 +773,6 @@ def search():
             questions = Question.query.filter(Question.statement.ilike(f'%{query}%')).all()
             results['questions'] = questions
 
-    # For Normal users
     else:
         results = {}
 
@@ -856,6 +785,32 @@ def search():
             results['quizzes'] = quizzes
 
     return render_template('search_results.html', results=results, query=query, user=current_user)
+
+
+
+
+#--------------------------------------------API'S---------------------------------------------------------------
+
+@app.route('/api/subjects', methods=['GET'])
+def api_get_subjects():
+    subjects = Course.query.all()
+    subjects_list = [subject.to_dict() for subject in subjects]
+    return jsonify({'subjects': subjects_list}), 200
+
+
+@app.route('/api/chapters', methods =['GET'])
+def api_get_chapters():
+    chapters = Chapter.query.all()
+    chapters_list = [chapter.to_dict()for chapter in chapters]
+    return jsonify({'chapters' : chapters_list}),200
+
+
+@app.route('/api/quizzes', methods =['GET'])
+def api_get_quzzies():
+    quzzies = Quiz.query.all()
+    quiz_list = [quiz.to_dict()for quiz in quzzies]
+    return jsonify({'Quzzies' : quiz_list}),200
+
 
 
 
